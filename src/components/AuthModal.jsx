@@ -1,6 +1,7 @@
-import React, { useState } from "react";
+import { useEffect, useState } from "react";
 import { supabase } from "../supabase";
-import { FaGoogle, FaFacebook, FaLock } from "react-icons/fa";
+import { FaGoogle, FaFacebook, FaLock, FaTimes } from "react-icons/fa";
+import LoadingSpinner from "./LoadingSpinner";
 
 const TRANSLATIONS = {
   en: {
@@ -9,6 +10,8 @@ const TRANSLATIONS = {
     subtitle: "Sign in using your Google or Facebook account to add comments and suggest status updates.",
     googleBtn: "Sign in with Google",
     facebookBtn: "Sign in with Facebook",
+    openingGoogle: "Opening Google...",
+    openingFacebook: "Opening Facebook...",
     footer: "We do not post to your profile or share your details. Read our privacy policy in the footer."
   },
   ml: {
@@ -17,87 +20,102 @@ const TRANSLATIONS = {
     subtitle: "കമന്റുകൾ രേഖപ്പെടുത്താനും മാറ്റങ്ങൾ നിർദ്ദേശിക്കാനും ഗൂഗിൾ അല്ലെങ്കിൽ ഫേസ്ബുക്ക് ഉപയോഗിച്ച് ലോഗിൻ ചെയ്യുക.",
     googleBtn: "ഗൂഗിൾ ഉപയോഗിച്ച് ലോഗിൻ ചെയ്യുക",
     facebookBtn: "ഫേസ്ബുക്ക് ഉപയോഗിച്ച് ലോഗിൻ ചെയ്യുക",
+    openingGoogle: "ഗൂഗിൾ തുറക്കുന്നു...",
+    openingFacebook: "ഫേസ്ബുക്ക് തുറക്കുന്നു...",
     footer: "ഞങ്ങൾ നിങ്ങളുടെ അനുവാദമില്ലാതെ പ്രൊഫൈലിൽ ഒന്നും പോസ്റ്റ് ചെയ്യുകയോ വിവരങ്ങൾ പങ്കിടുകയോ ഇല്ല. കൂടുതൽ വിവരങ്ങൾക്ക് പ്രൈവസി പോളിസി കാണുക."
   }
 };
 
 export default function AuthModal({ isOpen, onClose, lang = "en" }) {
-  const [loading, setLoading] = useState(false);
+  const [loadingProvider, setLoadingProvider] = useState("");
   const [errorMsg, setErrorMsg] = useState("");
-
-  if (!isOpen) return null;
 
   const t = TRANSLATIONS[lang] || TRANSLATIONS.en;
 
-  const handleGoogleLogin = async () => {
-    setLoading(true);
+  useEffect(() => {
+    if (!isOpen) return undefined;
+
+    const onKeyDown = (event) => {
+      if (event.key === "Escape" && !loadingProvider) {
+        onClose();
+      }
+    };
+
+    document.addEventListener("keydown", onKeyDown);
+    document.body.style.overflow = "hidden";
+
+    return () => {
+      document.removeEventListener("keydown", onKeyDown);
+      document.body.style.overflow = "";
+    };
+  }, [isOpen, loadingProvider, onClose]);
+
+  if (!isOpen) return null;
+
+  const handleOAuthLogin = async (provider) => {
+    setLoadingProvider(provider);
     setErrorMsg("");
     try {
       const { error } = await supabase.auth.signInWithOAuth({
-        provider: "google",
+        provider,
         options: {
           redirectTo: window.location.origin
         }
       });
       if (error) throw error;
     } catch (err) {
-      setErrorMsg(err.message || "Failed to initialize Google Sign In.");
+      setErrorMsg(err.message || `Failed to initialize ${provider} sign in.`);
     } finally {
-      setLoading(false);
+      setLoadingProvider("");
     }
   };
 
-  const handleFacebookLogin = async () => {
-    setLoading(true);
-    setErrorMsg("");
-    try {
-      const { error } = await supabase.auth.signInWithOAuth({
-        provider: "facebook",
-        options: {
-          redirectTo: window.location.origin
-        }
-      });
-      if (error) throw error;
-    } catch (err) {
-      setErrorMsg(err.message || "Failed to initialize Facebook Sign In.");
-    } finally {
-      setLoading(false);
+  const handleBackdropMouseDown = (event) => {
+    if (event.target === event.currentTarget && !loadingProvider) {
+      onClose();
     }
   };
 
   return (
-    <div className="fixed inset-0 z-100 flex items-center justify-center p-4 bg-slate-950/70 animate-fade-in">
-      <div className="bg-white border border-slate-200 w-full max-w-sm rounded-2xl overflow-hidden flex flex-col relative animate-slide-up">
+    <div className="fixed inset-0 z-100 flex items-center justify-center p-4 bg-slate-950/70 animate-fade-in" onMouseDown={handleBackdropMouseDown}>
+      <div
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="auth-modal-title"
+        aria-describedby="auth-modal-description"
+        className="bg-white border border-slate-200 w-full max-w-sm rounded-2xl overflow-hidden flex flex-col relative animate-slide-up"
+      >
         
         {/* Header Banner */}
         <div className="bg-navy-flag text-white px-6 py-4 flex items-center justify-between">
           <span className="font-space font-bold uppercase tracking-wider text-xs flex items-center gap-2">
-            <FaLock className="text-white text-xs" />
+            <FaLock aria-hidden="true" className="text-white text-xs" />
             {t.header}
           </span>
           <button 
+            type="button"
             onClick={onClose}
+            aria-label="Close sign in dialog"
+            disabled={!!loadingProvider}
             className="text-white/80 hover:text-white cursor-pointer p-1 rounded-lg hover:bg-white/10 transition-all border-none bg-transparent"
           >
-            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M6 18L18 6M6 6l12 12" />
-            </svg>
+            <FaTimes aria-hidden="true" className="w-4 h-4" />
           </button>
         </div>
 
         <div className="p-6 text-center space-y-6">
           <div className="space-y-2">
-            <h3 className="text-base font-space font-bold text-slate-900">
+            <h3 id="auth-modal-title" className="text-base font-space font-bold text-slate-900">
               {t.title}
             </h3>
-            <p className="text-xs text-slate-500 font-sans leading-relaxed">
+            <p id="auth-modal-description" className="text-xs text-slate-500 font-sans leading-relaxed">
               {t.subtitle}
             </p>
           </div>
 
           {errorMsg && (
-            <div className="bg-rose-50 border border-rose-100 text-rose-600 rounded-lg p-3 text-xs font-space font-medium text-left flex items-start gap-2 animate-fade-in">
-              <span className="w-1.5 h-1.5 rounded-full bg-rose-500 mt-1.5 flex-shrink-0"></span>
+            <div role="alert" className="bg-rose-50 border border-rose-100 text-rose-600 rounded-lg p-3 text-xs font-space font-medium text-left flex items-start gap-2 animate-fade-in">
+              <span aria-hidden="true" className="w-1.5 h-1.5 rounded-full bg-rose-500 mt-1.5 flex-shrink-0"></span>
               {errorMsg}
             </div>
           )}
@@ -106,27 +124,37 @@ export default function AuthModal({ isOpen, onClose, lang = "en" }) {
           <div className="flex flex-col gap-3">
             <button 
               type="button"
-              onClick={handleGoogleLogin}
-              disabled={loading}
-              className="w-full border border-slate-200 hover:border-slate-300 hover:bg-slate-50 text-slate-700 py-3 rounded-xl text-xs font-space font-bold flex items-center justify-center gap-2.5 cursor-pointer bg-white transition-all interactive-card"
+              onClick={() => handleOAuthLogin("google")}
+              disabled={!!loadingProvider}
+              aria-busy={loadingProvider === "google"}
+              className="w-full border border-slate-200 hover:border-slate-300 hover:bg-slate-50 text-slate-700 py-3 rounded-xl text-xs font-space font-bold flex items-center justify-center gap-2.5 cursor-pointer bg-white transition-all interactive-card disabled:cursor-wait disabled:opacity-70"
             >
-              <FaGoogle className="text-rose-500 text-base" />
-              {t.googleBtn}
+              {loadingProvider === "google" ? (
+                <LoadingSpinner label={t.openingGoogle} className="text-rose-500" />
+              ) : (
+                <FaGoogle aria-hidden="true" className="text-rose-500 text-base" />
+              )}
+              {loadingProvider === "google" ? t.openingGoogle : t.googleBtn}
             </button>
             
             <button 
               type="button"
-              onClick={handleFacebookLogin}
-              disabled={loading}
-              className="w-full border border-slate-200 hover:border-slate-300 hover:bg-slate-50 text-slate-700 py-3 rounded-xl text-xs font-space font-bold flex items-center justify-center gap-2.5 cursor-pointer bg-white transition-all interactive-card"
+              onClick={() => handleOAuthLogin("facebook")}
+              disabled={!!loadingProvider}
+              aria-busy={loadingProvider === "facebook"}
+              className="w-full border border-slate-200 hover:border-slate-300 hover:bg-slate-50 text-slate-700 py-3 rounded-xl text-xs font-space font-bold flex items-center justify-center gap-2.5 cursor-pointer bg-white transition-all interactive-card disabled:cursor-wait disabled:opacity-70"
             >
-              <FaFacebook className="text-blue-600 text-base" />
-              {t.facebookBtn}
+              {loadingProvider === "facebook" ? (
+                <LoadingSpinner label={t.openingFacebook} className="text-blue-600" />
+              ) : (
+                <FaFacebook aria-hidden="true" className="text-blue-600 text-base" />
+              )}
+              {loadingProvider === "facebook" ? t.openingFacebook : t.facebookBtn}
             </button>
           </div>
 
           <div className="border-t border-slate-100 pt-4 flex items-start justify-center gap-2">
-            <FaLock className="text-slate-400 text-[10px] mt-0.5 flex-shrink-0" />
+            <FaLock aria-hidden="true" className="text-slate-400 text-[10px] mt-0.5 flex-shrink-0" />
             <p className="text-[10px] text-slate-400 font-mono-tech leading-normal text-left">
               {t.footer}
             </p>

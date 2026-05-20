@@ -1,8 +1,9 @@
-import React, { useState, useEffect } from "react";
+import { useCallback, useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { supabase } from "../supabase";
 import UpdateStatusModal from "../components/UpdateStatusModal";
 import { FaArrowLeft, FaArrowUp, FaArrowDown, FaLock, FaHistory, FaBalanceScale } from "react-icons/fa";
+import LoadingSpinner from "../components/LoadingSpinner";
 
 const PAGE_TRANSLATIONS = {
   en: {
@@ -48,20 +49,18 @@ export default function PromiseHistoryPage({ allPromises, user, lang = "en", t, 
   const [history, setHistory] = useState([]);
   const [votesMap, setVotesMap] = useState({}); // updateId -> { score, userVote }
   const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState("");
+  const [voteError, setVoteError] = useState("");
+  const [votingId, setVotingId] = useState("");
   const [updateModalOpen, setUpdateModalOpen] = useState(false);
 
   // Find the target promise
   const promise = allPromises.find(p => p.id === id);
   const pageT = PAGE_TRANSLATIONS[lang] || PAGE_TRANSLATIONS.en;
 
-  useEffect(() => {
-    if (promise) {
-      loadHistory();
-    }
-  }, [promise, user]);
-
-  const loadHistory = async () => {
+  const loadHistory = useCallback(async () => {
     setLoading(true);
+    setLoadError("");
     try {
       // 1. Fetch edits history
       const { data: edits, error: editsErr } = await supabase
@@ -97,17 +96,28 @@ export default function PromiseHistoryPage({ allPromises, user, lang = "en", t, 
           }
         });
         setVotesMap(initialVotes);
+      } else {
+        setVotesMap({});
       }
     } catch (err) {
       console.error("Error loading verification history:", err.message);
+      setLoadError("Could not load the verification history right now.");
     } finally {
       setLoading(false);
     }
-  };
+  }, [id, user]);
+
+  useEffect(() => {
+    if (promise) {
+      Promise.resolve().then(loadHistory);
+    }
+  }, [promise, loadHistory]);
 
   const handleVote = async (updateId, voteVal) => {
     if (!user) return;
 
+    setVoteError("");
+    setVotingId(updateId);
     try {
       const current = votesMap[updateId] || { score: 0, userVote: 0 };
       
@@ -133,9 +143,12 @@ export default function PromiseHistoryPage({ allPromises, user, lang = "en", t, 
         if (error) throw error;
       }
 
-      loadHistory();
+      await loadHistory();
     } catch (err) {
       console.error("Error casting vote:", err.message);
+      setVoteError("Could not save your vote. Please try again.");
+    } finally {
+      setVotingId("");
     }
   };
 
@@ -145,6 +158,7 @@ export default function PromiseHistoryPage({ allPromises, user, lang = "en", t, 
         <h3 className="text-lg font-space font-bold text-slate-800 uppercase">{pageT.notFoundTitle}</h3>
         <p className="text-slate-500 text-xs mt-2">{pageT.notFoundDesc}</p>
         <button 
+          type="button"
           onClick={() => navigate("/")} 
           className="mt-6 px-4 py-2 bg-navy-flag text-white text-xs font-mono-tech font-bold uppercase rounded-lg border-none cursor-pointer flex items-center justify-center gap-1.5 mx-auto"
         >
@@ -165,6 +179,7 @@ export default function PromiseHistoryPage({ allPromises, user, lang = "en", t, 
       {/* Back Button */}
       <div className="flex items-center justify-between mb-6">
         <button
+          type="button"
           onClick={() => navigate("/")}
           className="flex items-center gap-2 text-xs font-mono-tech font-bold text-slate-600 hover:text-slate-900 transition-all border-none bg-transparent cursor-pointer"
         >
@@ -218,6 +233,7 @@ export default function PromiseHistoryPage({ allPromises, user, lang = "en", t, 
           <div className="flex md:justify-end items-center flex-shrink-0">
             {user ? (
               <button
+                type="button"
                 onClick={() => setUpdateModalOpen(true)}
                 className="w-full md:w-auto bg-navy-flag hover:bg-navy-flag-dark text-white rounded-lg py-2.5 px-5 text-xs font-mono-tech font-bold uppercase cursor-pointer border-none flex items-center justify-center gap-1.5 transition-all"
               >
@@ -240,13 +256,25 @@ export default function PromiseHistoryPage({ allPromises, user, lang = "en", t, 
         </h3>
 
         {loading ? (
-          <div className="py-8 text-center text-slate-400 font-mono-tech text-xs">{pageT.loading}</div>
+          <div className="py-8 text-center text-slate-400 font-mono-tech text-xs flex items-center justify-center gap-2" role="status">
+            <LoadingSpinner label={pageT.loading} className="text-navy-flag" />
+            {pageT.loading}
+          </div>
+        ) : loadError ? (
+          <div role="alert" className="text-amber-800 text-xs font-space p-8 bg-amber-50 border border-amber-200 rounded-2xl text-center animate-fade-in">
+            {loadError}
+          </div>
         ) : history.length === 0 ? (
           <div className="text-slate-400 text-xs font-space italic p-8 bg-white border border-slate-200 rounded-2xl text-center animate-fade-in">
             {pageT.emptyState}
           </div>
         ) : (
           <div className="relative border-l border-slate-200 ml-4 pl-8 py-2 space-y-8 animate-fade-in">
+            {voteError && (
+              <div role="alert" className="bg-rose-50 border border-rose-100 text-rose-600 rounded-lg p-3 text-xs font-space font-medium">
+                {voteError}
+              </div>
+            )}
             {history.map((edit) => {
               const voteScore = votesMap[edit.id]?.score || 0;
               const userVote = votesMap[edit.id]?.userVote || 0;
@@ -293,9 +321,10 @@ export default function PromiseHistoryPage({ allPromises, user, lang = "en", t, 
                           href={edit.source_link} 
                           target="_blank" 
                           rel="noopener noreferrer"
+                          aria-label={`Open verification source: ${edit.source_link}`}
                           className="text-navy-flag hover:underline truncate max-w-xs md:max-w-md font-sans font-medium flex items-center gap-1"
                         >
-                          <svg className="w-3.5 h-3.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <svg aria-hidden="true" className="w-3.5 h-3.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
                           </svg>
                           {edit.source_link}
@@ -306,8 +335,11 @@ export default function PromiseHistoryPage({ allPromises, user, lang = "en", t, 
                     {/* Upvote & Downvote Verification Panel */}
                     <div className="flex items-center gap-1 bg-slate-50 border border-slate-200 rounded-lg p-0.5 flex-shrink-0 self-end md:self-center">
                       <button
-                        disabled={!user}
+                        type="button"
+                        disabled={!user || votingId === edit.id}
                         onClick={() => handleVote(edit.id, 1)}
+                        aria-label={user ? pageT.upvoteTitle : pageT.loginToVote}
+                        aria-pressed={userVote === 1}
                         className={`p-2 rounded transition-all border-none bg-transparent ${!user ? "opacity-50 cursor-not-allowed" : "cursor-pointer"} ${userVote === 1 ? "bg-green-flag/10 text-green-flag" : "text-slate-400 hover:text-slate-600"}`}
                         title={user ? pageT.upvoteTitle : pageT.loginToVote}
                       >
@@ -319,8 +351,11 @@ export default function PromiseHistoryPage({ allPromises, user, lang = "en", t, 
                       </span>
 
                       <button
-                        disabled={!user}
+                        type="button"
+                        disabled={!user || votingId === edit.id}
                         onClick={() => handleVote(edit.id, -1)}
+                        aria-label={user ? pageT.downvoteTitle : pageT.loginToVote}
+                        aria-pressed={userVote === -1}
                         className={`p-2 rounded transition-all border-none bg-transparent ${!user ? "opacity-50 cursor-not-allowed" : "cursor-pointer"} ${userVote === -1 ? "bg-rose-50/10 text-rose-500" : "text-slate-400 hover:text-slate-600"}`}
                         title={user ? pageT.downvoteTitle : pageT.loginToVote}
                       >

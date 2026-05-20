@@ -1,5 +1,4 @@
-import React from "react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { FaArrowLeft, FaShieldAlt } from "react-icons/fa";
 
 const TRANSLATIONS = {
@@ -20,8 +19,8 @@ const TRANSLATIONS = {
     sec3Title: "3. Data Safety",
     sec3Desc: "Your login session is securely handled by Supabase using production-grade encryption. We do not sell, rent, or share your profile details with any third parties or political groups.",
     sec4Title: "4. Your Right to Delete Data",
-    sec4Desc1: "You have the full right to delete your account and all associated data at any time.",
-    sec4Desc2: "For step-by-step instructions on wiping all your suggested updates, comments, and votes from our database, please visit our:",
+    sec4Desc1: "You have the right to delete your public profile record and participation data at any time.",
+    sec4Desc2: "For step-by-step instructions on wiping your suggested updates, comments, and votes from our database, please visit our:",
     sec4Link: "Data Deletion Page",
     sec5Title: "5. Contact Us",
     sec5Desc: "If you have any questions about this privacy policy, please contact us at:",
@@ -44,7 +43,7 @@ const TRANSLATIONS = {
     sec3Title: "3. ഡാറ്റ സുരക്ഷിതത്വം",
     sec3Desc: "നിങ്ങളുടെ ലോഗിൻ വിവരങ്ങൾ Supabase വഴി അതീവ സുരക്ഷിതമായി എൻക്രിപ്റ്റ് ചെയ്താണ് സൂക്ഷിക്കുന്നത്. ഞങ്ങൾ ഒരു കാരണവശാലും നിങ്ങളുടെ വിവരങ്ങൾ മറ്റാർക്കും കൈമാറില്ല.",
     sec4Title: "4. വിവരങ്ങൾ ഡിലീറ്റ് ചെയ്യാനുള്ള അവകാശം",
-    sec4Desc1: "നിങ്ങളുടെ അക്കൗണ്ടും അതുമായി ബന്ധപ്പെട്ട എല്ലാ വിവരങ്ങളും എപ്പോൾ വേണമെങ്കിലും പൂർണ്ണമായി ഡിലീറ്റ് ചെയ്യാനുള്ള അവകാശം നിങ്ങൾക്കുണ്ട്.",
+    sec4Desc1: "നിങ്ങളുടെ പൊതു പ്രൊഫൈൽ റെക്കോർഡും പങ്കാളിത്ത വിവരങ്ങളും എപ്പോൾ വേണമെങ്കിലും ഡിലീറ്റ് ചെയ്യാനുള്ള അവകാശം നിങ്ങൾക്കുണ്ട്.",
     sec4Desc2: "നിങ്ങൾ രേഖപ്പെടുത്തിയ കമന്റുകളും നിർദ്ദേശിച്ച മാറ്റങ്ങളും ഡാറ്റാബേസിൽ നിന്ന് പൂർണ്ണമായി ഡിലീറ്റ് ചെയ്യാൻ താഴെ കാണുന്ന ലിങ്ക് സന്ദർശിക്കുക:",
     sec4Link: "ഡാറ്റ ഡിലീഷൻ പേജ്",
     sec5Title: "5. ബന്ധപ്പെടാൻ",
@@ -63,6 +62,7 @@ export default function PrivacyPolicyPage({ lang = "en" }) {
       {/* Header section */}
       <div className="flex items-center justify-between mb-8 border-b border-slate-200 pb-6">
         <button
+          type="button"
           onClick={() => navigate("/")}
           className="flex items-center gap-2 text-xs font-mono-tech font-bold text-slate-600 hover:text-slate-900 transition-all border-none bg-transparent cursor-pointer"
         >
@@ -116,9 +116,9 @@ export default function PrivacyPolicyPage({ lang = "en" }) {
             <p>{t.sec4Desc1}</p>
             <p>
               {t.sec4Desc2}{" "}
-              <a href="/data-deletion" className="text-navy-flag font-bold hover:underline">
+              <Link to="/data-deletion" className="text-navy-flag font-bold hover:underline">
                 {t.sec4Link}
-              </a>.
+              </Link>.
             </p>
           </section>
 
@@ -135,6 +135,7 @@ export default function PrivacyPolicyPage({ lang = "en" }) {
 
         <div className="pt-6 border-t border-slate-100 flex justify-center">
           <button
+            type="button"
             onClick={() => navigate("/")}
             className="bg-navy-flag hover:bg-navy-flag-dark text-white rounded-lg py-2.5 px-6 text-xs font-mono-tech font-bold uppercase transition-all cursor-pointer border-none"
           >

@@ -1,4 +1,3 @@
-import React from "react";
 import { Link } from "react-router-dom";
 import { FaHistory, FaRegComments, FaBalanceScale } from "react-icons/fa";
 
@@ -15,6 +14,11 @@ export default function PromiseCard({ promise, viewMode, lang, t, onOpenUpdateSt
         return {
           bg: "bg-saffron-light text-saffron-dark border-saffron/20",
           dot: "bg-saffron"
+        };
+      case "evaded":
+        return {
+          bg: "bg-rose-50 text-rose-700 border-rose-200",
+          dot: "bg-rose-500"
         };
       default:
         return {
@@ -80,7 +84,9 @@ export default function PromiseCard({ promise, viewMode, lang, t, onOpenUpdateSt
           </div>
           
           <button
+            type="button"
             onClick={() => onOpenUpdateStatus(promise)}
+            aria-label={`Suggest a status update for ${title}`}
             className="w-full bg-navy-flag hover:bg-navy-flag-dark text-white rounded-lg py-2 text-[10px] font-mono-tech font-bold uppercase tracking-wider transition-all cursor-pointer border-none text-center flex items-center justify-center gap-1.5"
           >
             <FaBalanceScale /> Update Status
@@ -142,7 +148,9 @@ export default function PromiseCard({ promise, viewMode, lang, t, onOpenUpdateSt
         </div>
 
         <button
+          type="button"
           onClick={() => onOpenUpdateStatus(promise)}
+          aria-label={`Suggest a status update for ${title}`}
           className="w-full bg-navy-flag hover:bg-navy-flag-dark text-white rounded-lg py-2 text-[10px] font-mono-tech font-bold uppercase tracking-wider transition-all cursor-pointer border-none text-center flex items-center justify-center gap-1.5"
         >
           <FaBalanceScale /> Update Status

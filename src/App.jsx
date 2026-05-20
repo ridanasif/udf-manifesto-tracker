@@ -1,7 +1,8 @@
-import React, { useState, useMemo, useEffect } from "react";
+import { useCallback, useState, useMemo, useEffect } from "react";
 import { Routes, Route, Link } from "react-router-dom";
 import { PROMISES_DATA } from "./data/promises";
 import { supabase } from "./supabase";
+import { STATUS_DISPLAY, VALID_STATUSES } from "./constants";
 
 // Modular UI Component Imports
 import Navbar from "./components/Navbar";
@@ -74,25 +75,40 @@ function App() {
   const [user, setUser] = useState(null);
   const [authOpen, setAuthOpen] = useState(false);
   const [updatesList, setUpdatesList] = useState([]);
+  const [updatesLoading, setUpdatesLoading] = useState(true);
+  const [updatesError, setUpdatesError] = useState("");
   const [activePromiseForUpdate, setActivePromiseForUpdate] = useState(null);
 
   const t = UI_TRANSLATIONS[lang];
 
   // 1. Listen for user auth sessions
   useEffect(() => {
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setUser(session?.user ?? null);
+    let mounted = true;
+
+    supabase.auth.getUser().then(({ data, error }) => {
+      if (mounted) {
+        setUser(error ? null : data.user);
+      }
     });
 
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
       setUser(session?.user ?? null);
     });
 
-    return () => subscription.unsubscribe();
+    return () => {
+      mounted = false;
+      subscription.unsubscribe();
+    };
   }, []);
 
+  useEffect(() => {
+    document.documentElement.lang = lang === "ml" ? "ml" : "en";
+  }, [lang]);
+
   // 2. Fetch status updates from database to override local statuses
-  const loadStatusUpdates = async () => {
+  const loadStatusUpdates = useCallback(async () => {
+    setUpdatesLoading(true);
+    setUpdatesError("");
     try {
       const { data, error } = await supabase
         .from("updates")
@@ -103,12 +119,15 @@ function App() {
       setUpdatesList(data || []);
     } catch (err) {
       console.error("Failed to load community status updates:", err.message);
+      setUpdatesError("Live community updates could not be loaded. Showing the local promise list.");
+    } finally {
+      setUpdatesLoading(false);
     }
-  };
+  }, []);
 
   useEffect(() => {
-    loadStatusUpdates();
-  }, []);
+    Promise.resolve().then(loadStatusUpdates);
+  }, [loadStatusUpdates]);
 
   // 3. Flatten the promises array from nested categories structure and apply live overrides
   const allPromises = useMemo(() => {
@@ -117,7 +136,9 @@ function App() {
     
     // Build a map of latest status from database
     updatesList.forEach(up => {
-      statusMap[up.promise_id] = up.new_status;
+      if (VALID_STATUSES.includes(up.new_status)) {
+        statusMap[up.promise_id] = up.new_status;
+      }
     });
 
     PROMISES_DATA.forEach(catGroup => {
@@ -128,19 +149,8 @@ function App() {
         let statusLabel_ml = p.statusLabel_ml;
 
         if (dbStatus) {
-          if (dbStatus === "fulfilled") {
-            statusLabel = "Implemented";
-            statusLabel_ml = "നടപ്പിലായത്";
-          } else if (dbStatus === "in_progress") {
-            statusLabel = "In Progress";
-            statusLabel_ml = "പുരോഗതിയിൽ";
-          } else if (dbStatus === "evaded") {
-            statusLabel = "Bypassed";
-            statusLabel_ml = "ഉപേക്ഷിച്ചത്";
-          } else {
-            statusLabel = "Pending";
-            statusLabel_ml = "ബാക്കിനിൽക്കുന്നത്";
-          }
+          statusLabel = STATUS_DISPLAY[dbStatus].statusLabel;
+          statusLabel_ml = STATUS_DISPLAY[dbStatus].statusLabel_ml;
         }
 
         list.push({
@@ -222,12 +232,18 @@ function App() {
     setUser(null);
   };
 
-  const handlePromiseUpdated = (promiseId, newStatus) => {
+  const handlePromiseUpdated = () => {
     loadStatusUpdates();
   };
 
   return (
     <div className="min-h-screen bg-slate-50 flex flex-col font-sans selection:bg-navy-flag selection:text-white antialiased">
+      <a
+        href="#main-content"
+        className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-100 focus:rounded-lg focus:bg-white focus:px-4 focus:py-2 focus:text-sm focus:font-bold focus:text-navy-flag focus:shadow-lg"
+      >
+        Skip to main content
+      </a>
       
       {/* Pinned Sticky Header */}
       <Navbar 
@@ -247,7 +263,7 @@ function App() {
             <Hero lang={lang} t={t} />
 
             {/* Main Page Content */}
-            <main className="flex-1 w-full max-w-7xl mx-auto px-4 md:px-8 py-10 relative z-30">
+            <main id="main-content" className="flex-1 w-full max-w-7xl mx-auto px-4 md:px-8 py-10 relative z-30" tabIndex="-1">
               
               {/* Dynamic Analytics Stats Counter */}
               <div className="mb-10">
@@ -282,6 +298,8 @@ function App() {
                 lang={lang}
                 t={t}
                 resetFilters={handleResetFilters}
+                isLoading={updatesLoading}
+                errorMessage={updatesError}
                 onOpenUpdateStatus={(promise) => {
                   if (user) {
                     setActivePromiseForUpdate(promise);

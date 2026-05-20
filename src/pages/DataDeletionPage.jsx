@@ -1,7 +1,8 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "../supabase";
-import { FaArrowLeft, FaTrashAlt, FaCheckCircle, FaExclamationTriangle, FaInfoCircle, FaLock } from "react-icons/fa";
+import { FaArrowLeft, FaTrashAlt, FaCheckCircle, FaExclamationTriangle, FaInfoCircle } from "react-icons/fa";
+import LoadingSpinner from "../components/LoadingSpinner";
 
 const TRANSLATIONS = {
   en: {
@@ -11,7 +12,7 @@ const TRANSLATIONS = {
     subtitle: "Compliance with Meta Platforms Data Protection",
     intro: "According to Facebook Meta Developer Policies, we provide this page so users can easily delete all data collected through Facebook or Google login.",
     deleteBoxTitle: "Instantly Delete My Suggested Updates & Comments",
-    deleteBoxDesc: "You are currently signed in as {identity}. Clicking below will instantly delete all your comments, suggested updates, and votes from our database and log you out.",
+    deleteBoxDesc: "You are currently signed in as {identity}. Clicking below will instantly delete your comments, suggested updates, votes, and public profile record from our database and log you out.",
     deletingBtn: "Wiping Records...",
     deleteBtn: "Delete All My Data & Log Out",
     successMsg: "All records deleted! Signing out...",
@@ -33,7 +34,7 @@ const TRANSLATIONS = {
     subtitle: "മെറ്റാ പ്ലാറ്റ്‌ഫോംസ് ഡാറ്റാ പ്രൊട്ടക്ഷൻ നയം അനുസരിച്ച്",
     intro: "ഫേസ്ബുക്ക് മെറ്റാ ഡെവലപ്പർ പോളിസി അനുസരിച്ച്, ഗൂഗിൾ അല്ലെങ്കിൽ ഫേസ്ബുക്ക് ലോഗിൻ വഴി ശേഖരിച്ച വിവരങ്ങൾ ഉപയോക്താക്കൾക്ക് എളുപ്പത്തിൽ ഡിലീറ്റ് ചെയ്യാനുള്ള സൗകര്യം ഞങ്ങൾ ഇവിടെ ഒരുക്കിയിട്ടുണ്ട്.",
     deleteBoxTitle: "എന്റെ നിർദ്ദേശങ്ങളും കമന്റുകളും ഉടൻ ഡിലീറ്റ് ചെയ്യുക",
-    deleteBoxDesc: "നിങ്ങൾ ഇപ്പോൾ {identity} എന്ന പേരിൽ ലോഗിൻ ചെയ്തിരിക്കുന്നു. താഴെയുള്ള ബട്ടണിൽ ക്ലിക്ക് ചെയ്താൽ നിങ്ങൾ രേഖപ്പെടുത്തിയ എല്ലാ കമന്റുകളും, നിർദ്ദേശങ്ങളും, വോട്ടുകളും ഡാറ്റാബേസിൽ നിന്ന് പൂർണ്ണമായി ഡിലീറ്റ് ചെയ്യപ്പെടുകയും ലോഗ് ഔട്ട് ആവുകയും ചെയ്യും.",
+    deleteBoxDesc: "നിങ്ങൾ ഇപ്പോൾ {identity} എന്ന പേരിൽ ലോഗിൻ ചെയ്തിരിക്കുന്നു. താഴെയുള്ള ബട്ടണിൽ ക്ലിക്ക് ചെയ്താൽ നിങ്ങൾ രേഖപ്പെടുത്തിയ കമന്റുകളും നിർദ്ദേശങ്ങളും വോട്ടുകളും പൊതു പ്രൊഫൈൽ റെക്കോർഡും ഡാറ്റാബേസിൽ നിന്ന് ഡിലീറ്റ് ചെയ്യപ്പെടുകയും ലോഗ് ഔട്ട് ആവുകയും ചെയ്യും.",
     deletingBtn: "ഡിലീറ്റ് ചെയ്യുന്നു...",
     deleteBtn: "എന്റെ ഡാറ്റ മുഴുവൻ ഡിലീറ്റ് ചെയ്ത് ലോഗ് ഔട്ട് ചെയ്യുക",
     successMsg: "എല്ലാ വിവരങ്ങളും ഡിലീറ്റ് ചെയ്തു! ലോഗ് ഔട്ട് ചെയ്യുന്നു...",
@@ -65,47 +66,28 @@ export default function DataDeletionPage({ user, onSignOut, lang = "en" }) {
     setSuccess(false);
 
     try {
-      // 1. Fetch all update IDs submitted by this user to clean dependent upvotes
-      const { data: userUpdates, error: fetchUpdatesErr } = await supabase
-        .from("updates")
-        .select("id")
-        .eq("user_id", user.id);
-      
-      if (fetchUpdatesErr) throw fetchUpdatesErr;
-
-      const userUpdateIds = userUpdates ? userUpdates.map(u => u.id) : [];
-
-      // 2. Cascade delete upvotes on updates suggested by this user
-      if (userUpdateIds.length > 0) {
-        const { error: votesOnUpdatesErr } = await supabase
-          .from("upvotes")
-          .delete()
-          .in("update_id", userUpdateIds);
-        if (votesOnUpdatesErr) throw votesOnUpdatesErr;
-      }
-
-      // 3. Delete upvotes cast BY this user on any updates
+      // 1. Delete upvotes cast by this user on any updates.
       const { error: votesByUserErr } = await supabase
         .from("upvotes")
         .delete()
         .eq("user_id", user.id);
       if (votesByUserErr) throw votesByUserErr;
 
-      // 4. Delete comments created by the user
+      // 2. Delete comments created by the user.
       const { error: commentsErr } = await supabase
         .from("comments")
         .delete()
         .eq("user_id", user.id);
       if (commentsErr) throw commentsErr;
 
-      // 5. Delete updates suggested by the user
+      // 3. Delete updates suggested by the user. Upvotes on those updates cascade.
       const { error: updatesErr } = await supabase
         .from("updates")
         .delete()
         .eq("user_id", user.id);
       if (updatesErr) throw updatesErr;
 
-      // 6. Delete user profile record
+      // 4. Delete the public profile record created for display/moderation.
       const { error: profileErr } = await supabase
         .from("profiles")
         .delete()
@@ -132,6 +114,7 @@ export default function DataDeletionPage({ user, onSignOut, lang = "en" }) {
       {/* Header section */}
       <div className="flex items-center justify-between mb-8 border-b border-slate-200 pb-6">
         <button
+          type="button"
           onClick={() => navigate("/")}
           className="flex items-center gap-2 text-xs font-mono-tech font-bold text-slate-600 hover:text-slate-900 transition-all border-none bg-transparent cursor-pointer"
         >
@@ -167,22 +150,25 @@ export default function DataDeletionPage({ user, onSignOut, lang = "en" }) {
             </p>
 
             {errorMsg && (
-              <div className="bg-rose-100 border border-rose-200 text-rose-700 rounded-lg p-3 text-xs">
+              <div role="alert" className="bg-rose-100 border border-rose-200 text-rose-700 rounded-lg p-3 text-xs">
                 {errorMsg}
               </div>
             )}
 
             {success && (
-              <div className="bg-green-100 border border-green-200 text-green-700 rounded-lg p-3 text-xs flex items-center gap-2">
+              <div role="status" className="bg-green-100 border border-green-200 text-green-700 rounded-lg p-3 text-xs flex items-center gap-2">
                 <FaCheckCircle className="text-green-600" /> {t.successMsg}
               </div>
             )}
 
             <button
+              type="button"
               onClick={handleRequestDeletion}
               disabled={loading || success}
-              className="bg-rose-600 hover:bg-rose-700 text-white rounded-lg py-2.5 px-6 text-xs font-mono-tech font-bold uppercase transition-all cursor-pointer border-none flex items-center gap-2"
+              aria-busy={loading}
+              className="bg-rose-600 hover:bg-rose-700 text-white rounded-lg py-2.5 px-6 text-xs font-mono-tech font-bold uppercase transition-all cursor-pointer border-none flex items-center gap-2 disabled:cursor-wait disabled:opacity-75"
             >
+              {loading && <LoadingSpinner label={t.deletingBtn} />}
               {loading ? t.deletingBtn : t.deleteBtn}
             </button>
           </div>

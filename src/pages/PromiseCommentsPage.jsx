@@ -1,7 +1,8 @@
-import React, { useState, useEffect } from "react";
+import { useCallback, useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { supabase } from "../supabase";
 import { FaLock, FaRegComments, FaArrowLeft } from "react-icons/fa";
+import LoadingSpinner from "../components/LoadingSpinner";
 
 const PAGE_TRANSLATIONS = {
   en: {
@@ -45,18 +46,14 @@ export default function PromiseCommentsPage({ allPromises, user, lang = "en", t 
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
   const [errorMsg, setErrorMsg] = useState("");
+  const [loadError, setLoadError] = useState("");
 
   const promise = allPromises.find(p => p.id === id);
   const pageT = PAGE_TRANSLATIONS[lang] || PAGE_TRANSLATIONS.en;
 
-  useEffect(() => {
-    if (promise) {
-      loadComments();
-    }
-  }, [promise]);
-
-  const loadComments = async () => {
+  const loadComments = useCallback(async () => {
     setLoading(true);
+    setLoadError("");
     try {
       const { data, error } = await supabase
         .from("comments")
@@ -68,28 +65,40 @@ export default function PromiseCommentsPage({ allPromises, user, lang = "en", t 
       setComments(data || []);
     } catch (err) {
       console.error("Error loading comments:", err.message);
+      setLoadError("Could not load comments right now.");
     } finally {
       setLoading(false);
     }
-  };
+  }, [id]);
+
+  useEffect(() => {
+    if (promise) {
+      Promise.resolve().then(loadComments);
+    }
+  }, [promise, loadComments]);
 
   const handleAddComment = async (e) => {
     e.preventDefault();
-    if (!user || !commentContent.trim()) return;
+    const trimmedContent = commentContent.trim();
+    if (!user || !trimmedContent) return;
+
+    if (trimmedContent.length < 3 || trimmedContent.length > 1000) {
+      setErrorMsg("Comments must be between 3 and 1000 characters.");
+      return;
+    }
 
     setErrorMsg("");
     setSubmitting(true);
 
     try {
-      const { data, error } = await supabase
+      const { error } = await supabase
         .from("comments")
         .insert({
           promise_id: id,
           user_id: user.id,
           user_name: user.user_metadata?.full_name || "User",
-          content: commentContent
-        })
-        .select();
+          content: trimmedContent
+        });
 
       if (error) throw error;
 
@@ -108,6 +117,7 @@ export default function PromiseCommentsPage({ allPromises, user, lang = "en", t 
         <h3 className="text-lg font-space font-bold text-slate-800 uppercase">{pageT.notFoundTitle}</h3>
         <p className="text-slate-500 text-xs mt-2">{pageT.notFoundDesc}</p>
         <button 
+          type="button"
           onClick={() => navigate("/")} 
           className="mt-6 px-4 py-2 bg-navy-flag text-white text-xs font-mono-tech font-bold uppercase rounded-lg border-none cursor-pointer"
         >
@@ -128,6 +138,7 @@ export default function PromiseCommentsPage({ allPromises, user, lang = "en", t 
       {/* Back Button */}
       <div className="flex items-center justify-between mb-6">
         <button
+          type="button"
           onClick={() => navigate("/")}
           className="flex items-center gap-2 text-xs font-mono-tech font-bold text-slate-600 hover:text-slate-900 transition-all border-none bg-transparent cursor-pointer"
         >
@@ -182,20 +193,23 @@ export default function PromiseCommentsPage({ allPromises, user, lang = "en", t 
           <div className="pt-2">
             {user ? (
               <form onSubmit={handleAddComment} className="space-y-3 bg-slate-50 p-4 border border-slate-200 rounded-xl">
-                <span className="block text-[10px] font-mono-tech uppercase font-bold text-slate-400">
+                <label htmlFor="comment-content" className="block text-[10px] font-mono-tech uppercase font-bold text-slate-400">
                   {pageT.writeLabel}
-                </span>
+                </label>
                 
                 {errorMsg && (
-                  <div className="bg-rose-50 border border-rose-100 text-rose-600 rounded-lg p-2 text-xs">
+                  <div role="alert" className="bg-rose-50 border border-rose-100 text-rose-600 rounded-lg p-2 text-xs">
                     {errorMsg}
                   </div>
                 )}
 
                 <div className="flex flex-col md:flex-row gap-3 items-end">
                   <textarea
+                    id="comment-content"
                     required
                     rows="2"
+                    minLength="3"
+                    maxLength="1000"
                     placeholder={pageT.textareaPlaceholder}
                     value={commentContent}
                     onChange={(e) => setCommentContent(e.target.value)}
@@ -204,8 +218,10 @@ export default function PromiseCommentsPage({ allPromises, user, lang = "en", t 
                   <button
                     type="submit"
                     disabled={submitting}
-                    className="w-full md:w-auto bg-navy-flag hover:bg-navy-flag-dark text-white rounded-lg py-2.5 px-5 text-xs font-mono-tech font-bold uppercase cursor-pointer border-none flex items-center justify-center flex-shrink-0 transition-all"
+                    aria-busy={submitting}
+                    className="w-full md:w-auto bg-navy-flag hover:bg-navy-flag-dark text-white rounded-lg py-2.5 px-5 text-xs font-mono-tech font-bold uppercase cursor-pointer border-none flex items-center justify-center gap-2 flex-shrink-0 transition-all disabled:cursor-wait disabled:opacity-75"
                   >
+                    {submitting && <LoadingSpinner label={pageT.postingBtn} />}
                     {submitting ? pageT.postingBtn : pageT.addBtn}
                   </button>
                 </div>
@@ -227,7 +243,14 @@ export default function PromiseCommentsPage({ allPromises, user, lang = "en", t 
         </h3>
 
         {loading ? (
-          <div className="py-8 text-center text-slate-400 font-mono-tech text-xs">{pageT.loading}</div>
+          <div className="py-8 text-center text-slate-400 font-mono-tech text-xs flex items-center justify-center gap-2" role="status">
+            <LoadingSpinner label={pageT.loading} className="text-navy-flag" />
+            {pageT.loading}
+          </div>
+        ) : loadError ? (
+          <div role="alert" className="text-amber-800 text-xs font-space p-8 bg-amber-50 border border-amber-200 rounded-2xl text-center animate-fade-in">
+            {loadError}
+          </div>
         ) : comments.length === 0 ? (
           <div className="text-slate-400 text-xs font-space italic p-8 bg-white border border-slate-200 rounded-2xl text-center animate-fade-in">
             {pageT.emptyState}

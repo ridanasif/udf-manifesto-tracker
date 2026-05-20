@@ -41,6 +41,19 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
+button,
+a,
+input,
+select,
+textarea {
+  min-height: 36px;
+}
+
+:focus-visible {
+  outline: 3px solid rgba(0, 0, 128, 0.45);
+  outline-offset: 3px;
+}
+
 /* Elegant Flat Accent Cards (Thin borders instead of thick lines) */
 .card-flat-saffron {
   background: var(--color-saffron-light);
@@ -95,4 +108,23 @@ body {
 
 .animate-slide-up {
   animation: slideUp 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    scroll-behavior: auto !important;
+    transition-duration: 0.01ms !important;
+  }
+
+  .interactive-card:hover {
+    transform: none;
+  }
 }

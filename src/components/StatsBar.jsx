@@ -1,5 +1,3 @@
-import React from "react";
-
 export default function StatsBar({ stats, selectedStatus, setSelectedStatus, t }) {
   return (
     <section className="bg-white border-y border-slate-100 py-6 relative z-20">
@@ -8,7 +6,10 @@ export default function StatsBar({ stats, selectedStatus, setSelectedStatus, t }
           
           {/* Stat 1: Total */}
           <button 
+            type="button"
             onClick={() => setSelectedStatus("All")}
+            aria-pressed={selectedStatus === "All"}
+            aria-label={`Show all ${stats.total} promises`}
             className={`text-center md:text-left md:px-4 py-3 md:py-2 hover:bg-slate-50 transition-all flex flex-col justify-center items-center md:items-start border rounded-xl cursor-pointer w-full border-transparent interactive-card ${
               selectedStatus === "All" ? "bg-slate-100 border-slate-200/60!" : ""
             }`}
@@ -23,7 +24,10 @@ export default function StatsBar({ stats, selectedStatus, setSelectedStatus, t }
 
           {/* Stat 2: Fulfilled */}
           <button 
+            type="button"
             onClick={() => setSelectedStatus("fulfilled")}
+            aria-pressed={selectedStatus === "fulfilled"}
+            aria-label={`Show ${stats.fulfilled} implemented promises`}
             className={`text-center md:text-left md:px-4 py-3 md:py-2 hover:bg-slate-50 transition-all flex flex-col justify-center items-center md:items-start border rounded-xl cursor-pointer w-full border-transparent interactive-card ${
               selectedStatus === "fulfilled" ? "bg-green-flag/5 border-slate-200!" : ""
             }`}
@@ -38,7 +42,10 @@ export default function StatsBar({ stats, selectedStatus, setSelectedStatus, t }
 
           {/* Stat 3: In Progress */}
           <button 
+            type="button"
             onClick={() => setSelectedStatus("in_progress")}
+            aria-pressed={selectedStatus === "in_progress"}
+            aria-label={`Show ${stats.inProgress} promises in progress`}
             className={`text-center md:text-left md:px-4 py-3 md:py-2 hover:bg-slate-50 transition-all flex flex-col justify-center items-center md:items-start border rounded-xl cursor-pointer w-full border-transparent interactive-card ${
               selectedStatus === "in_progress" ? "bg-saffron/5 border-slate-200!" : ""
             }`}
@@ -53,7 +60,10 @@ export default function StatsBar({ stats, selectedStatus, setSelectedStatus, t }
 
           {/* Stat 4: Evaded */}
           <button 
+            type="button"
             onClick={() => setSelectedStatus("evaded")}
+            aria-pressed={selectedStatus === "evaded"}
+            aria-label={`Show ${stats.evaded} bypassed promises`}
             className={`text-center md:text-left md:px-4 py-3 md:py-2 hover:bg-slate-50 transition-all flex flex-col justify-center items-center md:items-start border rounded-xl cursor-pointer w-full border-transparent interactive-card ${
               selectedStatus === "evaded" ? "bg-rose-50 border-slate-200!" : ""
             }`}
@@ -68,7 +78,10 @@ export default function StatsBar({ stats, selectedStatus, setSelectedStatus, t }
 
           {/* Stat 5: Pending */}
           <button 
+            type="button"
             onClick={() => setSelectedStatus("pending")}
+            aria-pressed={selectedStatus === "pending"}
+            aria-label={`Show ${stats.pending} pending promises`}
             className={`text-center md:text-left md:px-4 py-3 md:py-2 hover:bg-slate-50 transition-all flex flex-col justify-center items-center md:items-start border rounded-xl cursor-pointer w-full border-transparent interactive-card ${
               selectedStatus === "pending" ? "bg-navy-flag/5 border-slate-200!" : ""
             }`}

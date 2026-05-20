@@ -1,4 +1,4 @@
-import React from "react";
+import { STATUS_OPTIONS } from "../constants";
 
 export default function Filters({
   searchQuery,
@@ -22,10 +22,14 @@ export default function Filters({
         
         {/* Search */}
         <div className="relative flex-1">
-          <svg className="w-5 h-5 text-slate-400 absolute left-4 top-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <label htmlFor="promise-search" className="sr-only">
+            {t.search_placeholder}
+          </label>
+          <svg aria-hidden="true" className="w-5 h-5 text-slate-400 absolute left-4 top-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
           </svg>
           <input 
+            id="promise-search"
             type="text" 
             placeholder={t.search_placeholder}
             value={searchQuery}
@@ -34,10 +38,12 @@ export default function Filters({
           />
           {searchQuery && (
             <button 
+              type="button"
               onClick={() => setSearchQuery("")}
+              aria-label="Clear search"
               className="absolute right-3 top-3 text-slate-400 hover:text-slate-600 rounded-full p-0.5 hover:bg-slate-200/50 transition-all border-none bg-transparent cursor-pointer"
             >
-              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg aria-hidden="true" className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M6 18L18 6M6 6l12 12" />
               </svg>
             </button>
@@ -48,17 +54,13 @@ export default function Filters({
         <div className="flex flex-wrap items-center gap-3">
           
           {/* Status Pills with Bypassed added */}
-          <div className="flex items-center gap-1 bg-slate-50 border border-slate-200 rounded-lg p-0.5">
-            {[
-              { id: "All", label_en: "All", label_ml: "എല്ലാം" },
-              { id: "fulfilled", label_en: "Implemented", label_ml: "നടപ്പിലായത്" },
-              { id: "in_progress", label_en: "In Progress", label_ml: "പുരോഗതിയിൽ" },
-              { id: "pending", label_en: "Pending", label_ml: "ബാക്കി" },
-              { id: "evaded", label_en: "Bypassed", label_ml: "ഉപേക്ഷിച്ചത്" }
-            ].map(st => (
+          <div className="flex items-center gap-1 bg-slate-50 border border-slate-200 rounded-lg p-0.5" role="group" aria-label="Filter by status">
+            {[{ id: "All", label_en: "All", label_ml: "എല്ലാം" }, ...STATUS_OPTIONS].map(st => (
               <button
+                type="button"
                 key={st.id}
                 onClick={() => setSelectedStatus(st.id)}
+                aria-pressed={selectedStatus === st.id}
                 className={`px-3 py-1.5 rounded-md text-xs font-mono-tech font-bold uppercase transition-all cursor-pointer border-none outline-none ${
                   selectedStatus === st.id 
                     ? "bg-navy-flag text-white" 
@@ -71,22 +73,28 @@ export default function Filters({
           </div>
 
           {/* Grid/List View Toggles */}
-          <div className="flex items-center bg-slate-50 border border-slate-200 rounded-lg p-0.5">
+          <div className="flex items-center bg-slate-50 border border-slate-200 rounded-lg p-0.5" role="group" aria-label="Select view mode">
             <button 
+              type="button"
               onClick={() => setViewMode("grid")}
+              aria-label="Grid view"
+              aria-pressed={viewMode === "grid"}
               className={`p-1.5 rounded transition-all cursor-pointer border-none outline-none ${viewMode === "grid" ? "bg-white text-navy-flag border border-slate-200/50" : "text-slate-400 hover:text-slate-600"}`}
               title="Grid View"
             >
-              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg aria-hidden="true" className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
               </svg>
             </button>
             <button 
+              type="button"
               onClick={() => setViewMode("list")}
+              aria-label="List view"
+              aria-pressed={viewMode === "list"}
               className={`p-1.5 rounded transition-all cursor-pointer border-none outline-none ${viewMode === "list" ? "bg-white text-navy-flag border border-slate-200/50" : "text-slate-400 hover:text-slate-600"}`}
               title="List View"
             >
-              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg aria-hidden="true" className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 12h16M4 18h16" />
               </svg>
             </button>
@@ -97,14 +105,16 @@ export default function Filters({
       </div>
 
       {/* Category Tabs */}
-      <div className="flex flex-wrap items-center gap-2 mt-4 pt-1 overflow-x-auto">
+      <div className="flex flex-wrap items-center gap-2 mt-4 pt-1 overflow-x-auto" role="group" aria-label="Filter by category">
         {categories.map((cat) => {
           const isSelected = selectedCategory === cat.name;
           const displayLabel = lang === "en" ? cat.name : cat.name_ml;
           return (
             <button
+              type="button"
               key={cat.name}
               onClick={() => setSelectedCategory(cat.name)}
+              aria-pressed={isSelected}
               className={`flex items-center gap-2 px-3.5 py-2 rounded-lg text-xs md:text-sm font-space font-bold uppercase transition-all duration-150 cursor-pointer border-none outline-none flex-shrink-0 ${
                 isSelected 
                   ? "bg-slate-900 text-white" 
