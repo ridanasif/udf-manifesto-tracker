@@ -3,6 +3,7 @@ import { Routes, Route, Link, useLocation } from "react-router-dom";
 import { PROMISES_DATA } from "./data/promises";
 import { supabase } from "./supabase";
 import { STATUS_DISPLAY, VALID_STATUSES } from "./constants";
+import { FaGithub } from "react-icons/fa";
 
 // Modular UI Component Imports
 import Navbar from "./components/Navbar";
@@ -360,29 +361,43 @@ function App() {
       {/* Footer */}
       <footer className="bg-green-flag text-white py-12 px-4 md:px-8 relative">
         <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-6 text-xs md:text-sm">
-          <div className="flex flex-col gap-2">
-            <p className="text-green-50">
+          
+          <div className="flex flex-col items-center md:items-start gap-2.5 text-center md:text-left">
+            <p className="text-green-50 leading-relaxed">
               &copy; {new Date().getFullYear()} UDF Manifesto Tracker. {lang === "en" ? "All Rights Reserved." : "എല്ലാ അവകാശങ്ങളും നിക്ഷിപ്തം."}
             </p>
-            <div className="flex items-center gap-3 text-xs font-mono-tech uppercase tracking-wider text-green-200">
-              <Link to="/privacy" className="hover:text-white hover:underline transition-colors no-underline">Privacy Policy</Link>
-              <span className="text-green-300/40">|</span>
-              <Link to="/data-deletion" className="hover:text-white hover:underline transition-colors no-underline">Data Deletion</Link>
+            <div className="flex flex-wrap items-center justify-center md:justify-start gap-3 text-xs font-mono-tech uppercase tracking-wider text-green-200">
+              <Link to="/privacy" className="hover:text-white hover:underline transition-colors no-underline flex items-center h-full">Privacy Policy</Link>
+              <span className="text-green-300/40 select-none">|</span>
+              <Link to="/data-deletion" className="hover:text-white hover:underline transition-colors no-underline flex items-center h-full">Data Deletion</Link>
+              <span className="text-green-300/40 select-none">|</span>
+              <a 
+                href="https://github.com/ridanasif/udf-manifesto-tracker" 
+                target="_blank" 
+                rel="noopener noreferrer" 
+                className="text-green-200 hover:text-white flex items-center gap-1.5 transition-colors no-underline font-bold h-full"
+              >
+                <FaGithub className="text-sm flex-shrink-0" />
+                <span>GITHUB</span>
+              </a>
             </div>
           </div>
           
           {/* Custom Designer attribution linked to ridanasif.com */}
-          <div className="font-mono-tech tracking-wide text-green-100 bg-green-flag-dark/30 border border-green-flag-dark/40 px-4 py-2 rounded-lg">
-            DESIGNED AND DEVELOPED BY {" "}
-            <a 
-              href="https://www.ridanasif.com" 
-              target="_blank" 
-              rel="noopener noreferrer" 
-              className="text-white hover:text-saffron underline decoration-saffron underline-offset-4 transition-colors font-bold"
-            >
-              RIDAN ASIF
-            </a>
+          <div className="font-mono-tech tracking-wide text-green-100 bg-green-flag-dark/30 border border-green-flag-dark/40 px-4 py-2.5 rounded-lg flex items-center justify-center text-center">
+            <span>
+              DESIGNED AND DEVELOPED BY {" "}
+              <a 
+                href="https://www.ridanasif.com" 
+                target="_blank" 
+                rel="noopener noreferrer" 
+                className="text-white hover:text-saffron underline decoration-saffron underline-offset-4 transition-colors font-bold"
+              >
+                RIDAN ASIF
+              </a>
+            </span>
           </div>
+
         </div>
       </footer>
 
