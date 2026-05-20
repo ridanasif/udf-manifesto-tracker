@@ -41,7 +41,7 @@ const UI_TRANSLATIONS = {
   },
   ml: {
     disclaimer: "ഡിസ്ക്ലെയിമർ: ഇതൊരു ഔദ്യോഗിക സർക്കാർ വെബ്‌സൈറ്റല്ല. കേരളത്തിലെ ജനങ്ങൾ നിയന്ത്രിക്കുന്ന ഒരു സ്വതന്ത്ര വിവരശേഖരണ പ്ലാറ്റ്‌ഫോം മാത്രമാണിത്.",
-    title: "യു.ഡി.എഫ് പ്രകടനപത്രിക ട്രാക്കർ",
+    title: "UDF Manifesto Tracker",
     tagline: "സർക്കാരിന്റെ പൂർണ്ണ കാലാവധിയിലുടനീളം എല്ലാ വാഗ്ദാനങ്ങളും പരസ്യമായി ട്രാക്ക് ചെയ്യുന്നു.",
     chief_minister: "മുഖ്യമന്ത്രി",
     days_in_office: "അധികാരത്തിൽ കഴിഞ്ഞ ദിവസങ്ങൾ",
@@ -322,7 +322,7 @@ function App() {
 
         {/* Compliance Pages */}
         <Route path="/privacy" element={<PrivacyPolicyPage lang={lang} />} />
-        <Route path="/data-deletion" element={<DataDeletionPage user={user} onSignOut={handleSignOut} />} />
+        <Route path="/data-deletion" element={<DataDeletionPage user={user} onSignOut={handleSignOut} lang={lang} />} />
       </Routes>
 
       {/* Footer */}
@@ -330,7 +330,7 @@ function App() {
         <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-6 text-xs md:text-sm">
           <div className="flex flex-col gap-2">
             <p className="text-green-50">
-              &copy; {new Date().getFullYear()} {lang === "en" ? "UDF MANIFESTO TRACKER." : "യു.ഡി.എഫ് പ്രകടനപത്രിക ട്രാക്കർ."} {lang === "en" ? "All Rights Reserved." : "എല്ലാ അവകാശങ്ങളും നിക്ഷിപ്തം."}
+              &copy; {new Date().getFullYear()} UDF Manifesto Tracker. {lang === "en" ? "All Rights Reserved." : "എല്ലാ അവകാശങ്ങളും നിക്ഷിപ്തം."}
             </p>
             <div className="flex items-center gap-3 text-[10px] font-mono-tech uppercase tracking-wider text-green-200">
               <Link to="/privacy" className="hover:text-white hover:underline transition-colors no-underline">Privacy Policy</Link>
@@ -358,7 +358,7 @@ function App() {
       <AuthModal 
         isOpen={authOpen} 
         onClose={() => setAuthOpen(false)} 
-        onAuthSuccess={(u) => setUser(u)}
+        lang={lang}
       />
 
       {/* Global Status Update Modal triggered from Home Card */}

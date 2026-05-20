@@ -4,7 +4,44 @@ import { supabase } from "../supabase";
 import UpdateStatusModal from "../components/UpdateStatusModal";
 import { FaArrowLeft, FaArrowUp, FaArrowDown, FaLock, FaHistory, FaBalanceScale } from "react-icons/fa";
 
-export default function PromiseHistoryPage({ allPromises, user, lang, t, onPromiseUpdated }) {
+const PAGE_TRANSLATIONS = {
+  en: {
+    backBtn: "BACK TO ALL PROMISES",
+    badge: "HISTORY SECTION",
+    notFoundTitle: "Promise Not Found",
+    notFoundDesc: "The requested history page could not be found.",
+    goHome: "Go Home",
+    submitLog: "Suggest Status Change",
+    loginRequired: "Log in using the Sign In button at the top to suggest status changes.",
+    timelineTitle: "Dynamic Timeline & Status Updates",
+    loading: "Loading updates log...",
+    emptyState: "No dynamic updates have been registered yet. All card values remain set to Pending.",
+    changedProgress: "Changed progress to:",
+    verificationSource: "Verification Source:",
+    upvoteTitle: "Upvote: This source is real and correct",
+    downvoteTitle: "Downvote: This source is false or misleading",
+    loginToVote: "Log in to vote"
+  },
+  ml: {
+    backBtn: "തിരികെ വാഗ്ദാനങ്ങളുടെ പട്ടികയിലേക്ക്",
+    badge: "ചരിത്രം",
+    notFoundTitle: "വാഗ്ദാനം കണ്ടെത്താനായില്ല",
+    notFoundDesc: "നിങ്ങൾ തിരയുന്ന വാഗ്ദാനത്തിന്റെ തിരുത്തൽ വിവരങ്ങൾ ലഭ്യമല്ല.",
+    goHome: "തിരികെ പോവുക",
+    submitLog: "മാറ്റങ്ങൾ നിർദ്ദേശിക്കുക",
+    loginRequired: "മാറ്റങ്ങൾ നിർദ്ദേശിക്കാനായി മുകളിൽ കാണുന്ന ലോഗിൻ ബട്ടൺ ഉപയോഗിച്ച് ലോഗിൻ ചെയ്യുക.",
+    timelineTitle: "മാറ്റങ്ങളുടെ ടൈംലൈൻ",
+    loading: "വിവരങ്ങൾ ലഭ്യമാക്കുന്നു...",
+    emptyState: "മാറ്റങ്ങൾ ഒന്നും രേഖപ്പെടുത്തിയിട്ടില്ല. നിലവിൽ ഈ വാഗ്ദാനം Pending അവസ്ഥയിലാണ്.",
+    changedProgress: "നില മാറ്റം:",
+    verificationSource: "ആധാരമായ ലിങ്ക്:",
+    upvoteTitle: "ശരിയാണെന്ന് വോട്ട് ചെയ്യുക",
+    downvoteTitle: "തെറ്റാണെന്ന് വോട്ട് ചെയ്യുക",
+    loginToVote: "വോട്ട് ചെയ്യാൻ ലോഗിൻ ചെയ്യുക"
+  }
+};
+
+export default function PromiseHistoryPage({ allPromises, user, lang = "en", t, onPromiseUpdated }) {
   const { id } = useParams();
   const navigate = useNavigate();
   
@@ -15,6 +52,7 @@ export default function PromiseHistoryPage({ allPromises, user, lang, t, onPromi
 
   // Find the target promise
   const promise = allPromises.find(p => p.id === id);
+  const pageT = PAGE_TRANSLATIONS[lang] || PAGE_TRANSLATIONS.en;
 
   useEffect(() => {
     if (promise) {
@@ -104,13 +142,13 @@ export default function PromiseHistoryPage({ allPromises, user, lang, t, onPromi
   if (!promise) {
     return (
       <div className="max-w-4xl mx-auto px-4 py-20 text-center animate-fade-in">
-        <h3 className="text-lg font-space font-bold text-slate-800 uppercase">Promise Not Found</h3>
-        <p className="text-slate-500 text-xs mt-2">The requested history page could not be found.</p>
+        <h3 className="text-lg font-space font-bold text-slate-800 uppercase">{pageT.notFoundTitle}</h3>
+        <p className="text-slate-500 text-xs mt-2">{pageT.notFoundDesc}</p>
         <button 
           onClick={() => navigate("/")} 
           className="mt-6 px-4 py-2 bg-navy-flag text-white text-xs font-mono-tech font-bold uppercase rounded-lg border-none cursor-pointer flex items-center justify-center gap-1.5 mx-auto"
         >
-          <FaArrowLeft /> Go Home
+          <FaArrowLeft /> {pageT.goHome}
         </button>
       </div>
     );
@@ -131,10 +169,10 @@ export default function PromiseHistoryPage({ allPromises, user, lang, t, onPromi
           className="flex items-center gap-2 text-xs font-mono-tech font-bold text-slate-600 hover:text-slate-900 transition-all border-none bg-transparent cursor-pointer"
         >
           <FaArrowLeft className="text-slate-500 text-xs" />
-          BACK TO ALL PROMISES
+          {pageT.backBtn}
         </button>
         <span className="text-[10px] font-mono-tech font-bold text-slate-400 bg-slate-100 px-3 py-1 rounded-full border border-slate-200/50">
-          HISTORY SECTION
+          {pageT.badge}
         </span>
       </div>
 
@@ -183,11 +221,11 @@ export default function PromiseHistoryPage({ allPromises, user, lang, t, onPromi
                 onClick={() => setUpdateModalOpen(true)}
                 className="w-full md:w-auto bg-navy-flag hover:bg-navy-flag-dark text-white rounded-lg py-2.5 px-5 text-xs font-mono-tech font-bold uppercase cursor-pointer border-none flex items-center justify-center gap-1.5 transition-all"
               >
-                <FaBalanceScale /> Submit Verification Log
+                <FaBalanceScale /> {pageT.submitLog}
               </button>
             ) : (
-              <div className="text-[11px] text-slate-500 font-space font-medium bg-slate-100 border border-slate-200/50 px-4 py-2.5 rounded-xl w-full text-center flex items-center justify-center gap-1.5">
-                <FaLock className="text-slate-400 text-xs" /> Log in via the Sign In button at the top to suggest status changes.
+              <div className="text-[11px] text-slate-500 font-space font-medium bg-slate-100 border border-slate-200/50 px-4 py-2.5 rounded-xl w-full text-center flex items-center justify-center gap-1.5 animate-fade-in">
+                <FaLock className="text-slate-400 text-xs" /> {pageT.loginRequired}
               </div>
             )}
           </div>
@@ -198,21 +236,35 @@ export default function PromiseHistoryPage({ allPromises, user, lang, t, onPromi
       {/* Timeline Section */}
       <div className="space-y-6">
         <h3 className="text-xs font-mono-tech font-bold uppercase tracking-wider text-slate-800 flex items-center gap-1.5">
-          <FaHistory className="text-navy-flag text-sm" /> Dynamic Timeline & Status Updates
+          <FaHistory className="text-navy-flag text-sm" /> {pageT.timelineTitle}
         </h3>
 
         {loading ? (
-          <div className="py-8 text-center text-slate-400 font-mono-tech text-xs">Loading updates log...</div>
+          <div className="py-8 text-center text-slate-400 font-mono-tech text-xs">{pageT.loading}</div>
         ) : history.length === 0 ? (
-          <div className="text-slate-400 text-xs font-space italic p-8 bg-white border border-slate-200 rounded-2xl text-center">
-            No dynamic updates have been registered yet. All card values remain set to Pending.
+          <div className="text-slate-400 text-xs font-space italic p-8 bg-white border border-slate-200 rounded-2xl text-center animate-fade-in">
+            {pageT.emptyState}
           </div>
         ) : (
-          <div className="relative border-l border-slate-200 ml-4 pl-8 py-2 space-y-8">
+          <div className="relative border-l border-slate-200 ml-4 pl-8 py-2 space-y-8 animate-fade-in">
             {history.map((edit) => {
               const voteScore = votesMap[edit.id]?.score || 0;
               const userVote = votesMap[edit.id]?.userVote || 0;
               
+              // Localized status badge translator
+              let statusTxt = edit.new_status;
+              if (lang === "ml") {
+                if (edit.new_status?.toLowerCase() === "implemented" || edit.new_status?.toLowerCase() === "fulfilled") {
+                  statusTxt = "നടപ്പിലാക്കിയത്";
+                } else if (edit.new_status?.toLowerCase() === "in_progress") {
+                  statusTxt = "പുരോഗതിയിൽ";
+                } else if (edit.new_status?.toLowerCase() === "bypassed" || edit.new_status?.toLowerCase() === "evaded") {
+                  statusTxt = "ഉപേക്ഷിച്ചത്";
+                } else {
+                  statusTxt = "ബാക്കിനിൽക്കുന്നത്";
+                }
+              }
+
               return (
                 <div key={edit.id} className="relative">
                   <span className="absolute -left-[41px] top-1 w-6 h-6 rounded-full border-2 border-white bg-navy-flag flex items-center justify-center text-white">
@@ -231,12 +283,12 @@ export default function PromiseHistoryPage({ allPromises, user, lang, t, onPromi
                       </div>
                       
                       <div className="text-xs font-space flex items-center gap-2">
-                        <span className="text-slate-400">Changed progress to:</span>
-                        <span className="font-bold text-navy-flag uppercase">{edit.new_status}</span>
+                        <span className="text-slate-400">{pageT.changedProgress}</span>
+                        <span className="font-bold text-navy-flag uppercase">{statusTxt}</span>
                       </div>
 
                       <div className="text-xs pt-1.5 flex items-start gap-1.5">
-                        <span className="text-[10px] font-mono-tech font-bold text-slate-400 uppercase mt-0.5">Verification Source:</span>
+                        <span className="text-[10px] font-mono-tech font-bold text-slate-400 uppercase mt-0.5">{pageT.verificationSource}</span>
                         <a 
                           href={edit.source_link} 
                           target="_blank" 
@@ -257,7 +309,7 @@ export default function PromiseHistoryPage({ allPromises, user, lang, t, onPromi
                         disabled={!user}
                         onClick={() => handleVote(edit.id, 1)}
                         className={`p-2 rounded transition-all border-none bg-transparent ${!user ? "opacity-50 cursor-not-allowed" : "cursor-pointer"} ${userVote === 1 ? "bg-green-flag/10 text-green-flag" : "text-slate-400 hover:text-slate-600"}`}
-                        title={user ? "Upvote: This source is real and correct" : "Log in to vote"}
+                        title={user ? pageT.upvoteTitle : pageT.loginToVote}
                       >
                         <FaArrowUp className="w-3 h-3" />
                       </button>
@@ -269,8 +321,8 @@ export default function PromiseHistoryPage({ allPromises, user, lang, t, onPromi
                       <button
                         disabled={!user}
                         onClick={() => handleVote(edit.id, -1)}
-                        className={`p-2 rounded transition-all border-none bg-transparent ${!user ? "opacity-50 cursor-not-allowed" : "cursor-pointer"} ${userVote === -1 ? "bg-rose-500/10 text-rose-500" : "text-slate-400 hover:text-slate-600"}`}
-                        title={user ? "Downvote: This source is false or misleading" : "Log in to vote"}
+                        className={`p-2 rounded transition-all border-none bg-transparent ${!user ? "opacity-50 cursor-not-allowed" : "cursor-pointer"} ${userVote === -1 ? "bg-rose-50/10 text-rose-500" : "text-slate-400 hover:text-slate-600"}`}
+                        title={user ? pageT.downvoteTitle : pageT.loginToVote}
                       >
                         <FaArrowDown className="w-3 h-3" />
                       </button>
