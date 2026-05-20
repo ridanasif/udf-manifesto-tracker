@@ -74,6 +74,24 @@ export default function Hero({ lang, t }) {
             <p className="text-xs text-white font-mono-tech mt-1.5 uppercase">{remainingSub}</p>
           </div>
         </div>
+
+        {/* View Full Manifesto PDF CTA */}
+        <div className="mt-8">
+          <a
+            href="https://artifacts.keraladigitalarchive.org/public/2026-udf-manifesto/2026-udf-manifesto.pdf"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-2 bg-white/10 hover:bg-white/20 text-white border border-white/20 hover:border-white/30 rounded-xl px-5 py-2.5 text-xs font-mono-tech font-bold uppercase tracking-wider transition-all duration-300 backdrop-blur-xs cursor-pointer no-underline interactive-card"
+          >
+            <svg className="w-4 h-4 text-saffron flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+            </svg>
+            <span>
+              {lang === "en" ? "View Full Manifesto (PDF)" : "പൂർണ്ണ പ്രകടനപത്രിക കാണുക (PDF)"}
+            </span>
+          </a>
+        </div>
+
       </div>
     </section>
   );
