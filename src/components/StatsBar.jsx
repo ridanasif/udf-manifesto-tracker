@@ -1,0 +1,98 @@
+import React from "react";
+
+export default function StatsBar({ stats, selectedStatus, setSelectedStatus, t }) {
+  return (
+    <section className="bg-white border-y border-slate-200 py-6 relative z-20">
+      <div className="max-w-7xl mx-auto px-4 md:px-8">
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-5 md:gap-4 divide-y md:divide-y-0 md:divide-x divide-slate-100">
+          
+          {/* Stat 1: Total */}
+          <button 
+            onClick={() => setSelectedStatus("All")}
+            className={`text-center md:text-left md:px-4 py-3 md:py-2 hover:bg-slate-50 transition-all flex flex-col justify-center items-center md:items-start border rounded-xl cursor-pointer w-full border-transparent interactive-card ${
+              selectedStatus === "All" ? "bg-slate-100 border-slate-300!" : ""
+            }`}
+          >
+            <span className="text-3xl md:text-4xl font-mono-tech font-bold text-slate-900">
+              {stats.total}
+            </span>
+            <span className="text-[10px] md:text-[11px] font-mono-tech font-bold text-slate-400 tracking-wider mt-1.5 uppercase">
+              {t.total_promises}
+            </span>
+          </button>
+
+          {/* Stat 2: Fulfilled */}
+          <button 
+            onClick={() => setSelectedStatus("fulfilled")}
+            className={`text-center md:text-left md:px-4 py-3 md:py-2 hover:bg-slate-50 transition-all flex flex-col justify-center items-center md:items-start border rounded-xl cursor-pointer w-full border-transparent border-l-[3px]! border-l-green-flag! interactive-card ${
+              selectedStatus === "fulfilled" ? "bg-green-flag/5 border-green-flag/25!" : ""
+            }`}
+          >
+            <span className="text-3xl md:text-4xl font-mono-tech font-bold text-green-flag">
+              {stats.fulfilled}
+            </span>
+            <span className="text-[10px] md:text-[11px] font-mono-tech font-bold text-slate-400 tracking-wider mt-1.5 uppercase">
+              {t.fulfilled}
+            </span>
+          </button>
+
+          {/* Stat 3: In Progress */}
+          <button 
+            onClick={() => setSelectedStatus("in_progress")}
+            className={`text-center md:text-left md:px-4 py-3 md:py-2 hover:bg-slate-50 transition-all flex flex-col justify-center items-center md:items-start border rounded-xl cursor-pointer w-full border-transparent border-l-[3px]! border-l-saffron! interactive-card ${
+              selectedStatus === "in_progress" ? "bg-saffron/5 border-saffron/25!" : ""
+            }`}
+          >
+            <span className="text-3xl md:text-4xl font-mono-tech font-bold text-saffron">
+              {stats.inProgress}
+            </span>
+            <span className="text-[10px] md:text-[11px] font-mono-tech font-bold text-slate-400 tracking-wider mt-1.5 uppercase">
+              {t.in_progress}
+            </span>
+          </button>
+
+          {/* Stat 4: Evaded */}
+          <button 
+            onClick={() => setSelectedStatus("evaded")}
+            className={`text-center md:text-left md:px-4 py-3 md:py-2 hover:bg-slate-50 transition-all flex flex-col justify-center items-center md:items-start border rounded-xl cursor-pointer w-full border-transparent border-l-[3px]! border-l-rose-500! interactive-card ${
+              selectedStatus === "evaded" ? "bg-rose-50 border-rose-200!" : ""
+            }`}
+          >
+            <span className="text-3xl md:text-4xl font-mono-tech font-bold text-slate-400">
+              {stats.evaded}
+            </span>
+            <span className="text-[10px] md:text-[11px] font-mono-tech font-bold text-slate-400 tracking-wider mt-1.5 uppercase">
+              {t.evaded}
+            </span>
+          </button>
+
+          {/* Stat 5: Pending */}
+          <button 
+            onClick={() => setSelectedStatus("pending")}
+            className={`text-center md:text-left md:px-4 py-3 md:py-2 hover:bg-slate-50 transition-all flex flex-col justify-center items-center md:items-start border rounded-xl cursor-pointer w-full border-transparent border-l-[3px]! border-l-navy-flag! interactive-card ${
+              selectedStatus === "pending" ? "bg-navy-flag/5 border-navy-flag/20!" : ""
+            }`}
+          >
+            <span className="text-3xl md:text-4xl font-mono-tech font-bold text-navy-flag">
+              {stats.pending}
+            </span>
+            <span className="text-[10px] md:text-[11px] font-mono-tech font-bold text-slate-400 tracking-wider mt-1.5 uppercase">
+              {t.pending}
+            </span>
+          </button>
+
+          {/* Stat 6: Completion Rate */}
+          <div className="text-center md:text-left md:px-4 py-3 md:py-2 flex flex-col justify-center items-center md:items-start w-full">
+            <span className="text-3xl md:text-4xl font-mono-tech font-bold text-navy-flag">
+              {stats.completionRate}%
+            </span>
+            <span className="text-[10px] md:text-[11px] font-mono-tech font-bold text-slate-400 tracking-wider mt-1.5 uppercase">
+              {t.completion_rate}
+            </span>
+          </div>
+
+        </div>
+      </div>
+    </section>
+  );
+}
