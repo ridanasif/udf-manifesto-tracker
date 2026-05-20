@@ -51,17 +51,17 @@ export default function Filters({
         </div>
 
         {/* Filters and View toggles */}
-        <div className="flex flex-wrap items-center gap-3">
+        <div className="flex flex-wrap items-center gap-3 min-w-0 max-w-full">
           
           {/* Status Pills with Bypassed added */}
-          <div className="flex items-center gap-1 bg-slate-50 border border-slate-200 rounded-lg p-0.5" role="group" aria-label="Filter by status">
+          <div className="flex items-center gap-1 bg-slate-50 border border-slate-200 rounded-lg p-0.5 max-w-full overflow-x-auto" role="group" aria-label="Filter by status">
             {[{ id: "All", label_en: "All", label_ml: "എല്ലാം" }, ...STATUS_OPTIONS].map(st => (
               <button
                 type="button"
                 key={st.id}
                 onClick={() => setSelectedStatus(st.id)}
                 aria-pressed={selectedStatus === st.id}
-                className={`px-3 py-1.5 rounded-md text-xs font-mono-tech font-bold uppercase transition-all cursor-pointer border-none outline-none ${
+                className={`px-3 py-1.5 rounded-md text-sm font-mono-tech font-bold uppercase transition-all cursor-pointer border-none outline-none flex-shrink-0 ${
                   selectedStatus === st.id 
                     ? "bg-navy-flag text-white" 
                     : "text-slate-500 hover:text-slate-800"
@@ -115,14 +115,14 @@ export default function Filters({
               key={cat.name}
               onClick={() => setSelectedCategory(cat.name)}
               aria-pressed={isSelected}
-              className={`flex items-center gap-2 px-3.5 py-2 rounded-lg text-xs md:text-sm font-space font-bold uppercase transition-all duration-150 cursor-pointer border-none outline-none flex-shrink-0 ${
+              className={`flex items-center gap-2 px-3.5 py-2 rounded-lg text-sm font-space font-bold uppercase transition-all duration-150 cursor-pointer border-none outline-none flex-shrink-0 ${
                 isSelected 
                   ? "bg-slate-900 text-white" 
                   : "bg-slate-100 hover:bg-slate-200 text-slate-600 hover:text-slate-800"
               }`}
             >
               {displayLabel}
-              <span className={`px-1.5 py-0.5 rounded text-[10px] font-mono-tech font-bold ${isSelected ? "bg-white/20 text-white" : "bg-slate-200 text-slate-500"}`}>
+              <span className={`px-1.5 py-0.5 rounded text-xs font-mono-tech font-bold ${isSelected ? "bg-white/20 text-white" : "bg-slate-200 text-slate-500"}`}>
                 {categoryCounts[cat.name] || 0}
               </span>
             </button>

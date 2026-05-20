@@ -51,6 +51,13 @@ export default function PromiseCommentsPage({ allPromises, user, lang = "en", t 
   const promise = allPromises.find(p => p.id === id);
   const pageT = PAGE_TRANSLATIONS[lang] || PAGE_TRANSLATIONS.en;
 
+  useEffect(() => {
+    Promise.resolve().then(() => {
+      setCommentContent("");
+      setErrorMsg("");
+    });
+  }, [id]);
+
   const loadComments = useCallback(async () => {
     setLoading(true);
     setLoadError("");
@@ -115,11 +122,11 @@ export default function PromiseCommentsPage({ allPromises, user, lang = "en", t 
     return (
       <div className="max-w-4xl mx-auto px-4 py-20 text-center animate-fade-in">
         <h3 className="text-lg font-space font-bold text-slate-800 uppercase">{pageT.notFoundTitle}</h3>
-        <p className="text-slate-500 text-xs mt-2">{pageT.notFoundDesc}</p>
+        <p className="text-slate-500 text-sm mt-2">{pageT.notFoundDesc}</p>
         <button 
           type="button"
           onClick={() => navigate("/")} 
-          className="mt-6 px-4 py-2 bg-navy-flag text-white text-xs font-mono-tech font-bold uppercase rounded-lg border-none cursor-pointer"
+          className="mt-6 px-4 py-2 bg-navy-flag text-white text-sm font-mono-tech font-bold uppercase rounded-lg border-none cursor-pointer"
         >
           {pageT.goHome}
         </button>
@@ -140,12 +147,12 @@ export default function PromiseCommentsPage({ allPromises, user, lang = "en", t 
         <button
           type="button"
           onClick={() => navigate("/")}
-          className="flex items-center gap-2 text-xs font-mono-tech font-bold text-slate-600 hover:text-slate-900 transition-all border-none bg-transparent cursor-pointer"
+          className="flex items-center gap-2 text-sm font-mono-tech font-bold text-slate-600 hover:text-slate-900 transition-all border-none bg-transparent cursor-pointer"
         >
           <FaArrowLeft className="text-slate-500 text-xs" />
           {pageT.backBtn}
         </button>
-        <span className="text-[10px] font-mono-tech font-bold text-slate-400 bg-slate-100 px-3 py-1 rounded-full border border-slate-200/50">
+        <span className="text-xs font-mono-tech font-bold text-slate-400 bg-slate-100 px-3 py-1 rounded-full border border-slate-200/50">
           {pageT.badge}
         </span>
       </div>
@@ -155,10 +162,10 @@ export default function PromiseCommentsPage({ allPromises, user, lang = "en", t 
         
         {/* Header Tags */}
         <div className="flex flex-wrap items-center gap-2">
-          <span className="text-[10px] font-mono-tech font-bold uppercase tracking-wider text-slate-400 bg-slate-100 px-2.5 py-1 rounded">
+          <span className="text-xs font-mono-tech font-bold uppercase tracking-wider text-slate-400 bg-slate-100 px-2.5 py-1 rounded">
             {categoryLabel}
           </span>
-          <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded text-[10px] font-mono-tech font-bold uppercase tracking-wider border ${
+          <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded text-xs font-mono-tech font-bold uppercase tracking-wider border ${
             promise.status === 'fulfilled' ? 'bg-green-flag-light text-green-flag-dark border-green-flag/20' : 
             promise.status === 'in_progress' ? 'bg-saffron-light text-saffron-dark border-saffron/20' : 
             'bg-navy-flag-light text-navy-flag-dark border-navy-flag/15'
@@ -178,27 +185,27 @@ export default function PromiseCommentsPage({ allPromises, user, lang = "en", t 
         </h2>
 
         {/* Description */}
-        <p className="text-slate-700 text-sm leading-relaxed font-sans font-medium bg-slate-50 p-4 rounded-xl border border-slate-200/40">
+        <p className="text-slate-700 text-base leading-relaxed font-sans font-medium bg-slate-50 p-4 rounded-xl border border-slate-200/40">
           {lang === 'en' ? promise.description : promise.description_ml}
         </p>
 
         {/* Bottom Panel containing Department info and Embedded Comment Input Form */}
         <div className="pt-5 border-t border-slate-100 space-y-4">
           <div>
-            <span className="block text-[9px] font-mono-tech uppercase font-bold text-slate-400">{t.department}</span>
-            <span className="text-xs text-slate-800 font-bold font-space mt-1 block">{deptLabel || "TBD"}</span>
+            <span className="block text-xs font-mono-tech uppercase font-bold text-slate-400">{t.department}</span>
+            <span className="text-sm text-slate-800 font-bold font-space mt-1 block">{deptLabel || "TBD"}</span>
           </div>
 
           {/* Embedded Comment Field */}
           <div className="pt-2">
             {user ? (
               <form onSubmit={handleAddComment} className="space-y-3 bg-slate-50 p-4 border border-slate-200 rounded-xl">
-                <label htmlFor="comment-content" className="block text-[10px] font-mono-tech uppercase font-bold text-slate-400">
+                <label htmlFor="comment-content" className="block text-xs font-mono-tech uppercase font-bold text-slate-400">
                   {pageT.writeLabel}
                 </label>
                 
                 {errorMsg && (
-                  <div role="alert" className="bg-rose-50 border border-rose-100 text-rose-600 rounded-lg p-2 text-xs">
+                  <div role="alert" className="bg-rose-50 border border-rose-100 text-rose-600 rounded-lg p-2 text-sm">
                     {errorMsg}
                   </div>
                 )}
@@ -213,13 +220,13 @@ export default function PromiseCommentsPage({ allPromises, user, lang = "en", t 
                     placeholder={pageT.textareaPlaceholder}
                     value={commentContent}
                     onChange={(e) => setCommentContent(e.target.value)}
-                    className="w-full bg-white border border-slate-200 rounded-lg p-3 text-xs focus:outline-none focus:border-navy-flag/50 text-slate-800 font-sans"
+                    className="w-full bg-white border border-slate-200 rounded-lg p-3 text-sm focus:outline-none focus:border-navy-flag/50 text-slate-800 font-sans"
                   />
                   <button
                     type="submit"
                     disabled={submitting}
                     aria-busy={submitting}
-                    className="w-full md:w-auto bg-navy-flag hover:bg-navy-flag-dark text-white rounded-lg py-2.5 px-5 text-xs font-mono-tech font-bold uppercase cursor-pointer border-none flex items-center justify-center gap-2 flex-shrink-0 transition-all disabled:cursor-wait disabled:opacity-75"
+                    className="w-full md:w-auto bg-navy-flag hover:bg-navy-flag-dark text-white rounded-lg py-2.5 px-5 text-sm font-mono-tech font-bold uppercase cursor-pointer border-none flex items-center justify-center gap-2 flex-shrink-0 transition-all disabled:cursor-wait disabled:opacity-75"
                   >
                     {submitting && <LoadingSpinner label={pageT.postingBtn} />}
                     {submitting ? pageT.postingBtn : pageT.addBtn}
@@ -227,7 +234,7 @@ export default function PromiseCommentsPage({ allPromises, user, lang = "en", t 
                 </div>
               </form>
             ) : (
-              <div className="bg-slate-50 border border-slate-200 p-4 rounded-xl text-center text-xs text-slate-500 font-space font-medium flex items-center justify-center gap-1.5 animate-fade-in">
+              <div className="bg-slate-50 border border-slate-200 p-4 rounded-xl text-center text-sm text-slate-500 font-space font-medium flex items-center justify-center gap-1.5 animate-fade-in">
                 <FaLock className="text-slate-400" /> {pageT.loginRequired}
               </div>
             )}
@@ -238,37 +245,37 @@ export default function PromiseCommentsPage({ allPromises, user, lang = "en", t 
 
       {/* Discussion List */}
       <div className="space-y-4">
-        <h3 className="text-xs font-mono-tech font-bold uppercase tracking-wider text-slate-800 flex items-center gap-1.5">
+        <h3 className="text-sm font-mono-tech font-bold uppercase tracking-wider text-slate-800 flex items-center gap-1.5">
           <FaRegComments className="text-navy-flag text-sm" /> {pageT.sectionTitle}
         </h3>
 
         {loading ? (
-          <div className="py-8 text-center text-slate-400 font-mono-tech text-xs flex items-center justify-center gap-2" role="status">
+          <div className="py-8 text-center text-slate-400 font-mono-tech text-sm flex items-center justify-center gap-2" role="status">
             <LoadingSpinner label={pageT.loading} className="text-navy-flag" />
             {pageT.loading}
           </div>
         ) : loadError ? (
-          <div role="alert" className="text-amber-800 text-xs font-space p-8 bg-amber-50 border border-amber-200 rounded-2xl text-center animate-fade-in">
+          <div role="alert" className="text-amber-800 text-sm font-space p-8 bg-amber-50 border border-amber-200 rounded-2xl text-center animate-fade-in">
             {loadError}
           </div>
         ) : comments.length === 0 ? (
-          <div className="text-slate-400 text-xs font-space italic p-8 bg-white border border-slate-200 rounded-2xl text-center animate-fade-in">
+          <div className="text-slate-400 text-sm font-space italic p-8 bg-white border border-slate-200 rounded-2xl text-center animate-fade-in">
             {pageT.emptyState}
           </div>
         ) : (
           <div className="space-y-3.5 animate-fade-in">
             {comments.map((comment) => (
               <div key={comment.id} className="bg-white border border-slate-200 p-5 rounded-2xl">
-                <div className="flex items-center justify-between text-xs mb-2">
+                <div className="flex items-center justify-between text-sm mb-2">
                   <span className="font-space font-bold text-slate-800 flex items-center gap-1.5">
                     <span className="w-1.5 h-1.5 rounded-full bg-navy-flag"></span>
                     {comment.user_name}
                   </span>
-                  <span className="text-slate-400 text-[10px] font-mono-tech font-bold bg-slate-50 px-2 py-0.5 rounded border border-slate-200/50">
+                  <span className="text-slate-400 text-xs font-mono-tech font-bold bg-slate-50 px-2 py-0.5 rounded border border-slate-200/50">
                     {new Date(comment.created_at).toLocaleString()}
                   </span>
                 </div>
-                <p className="text-xs text-slate-700 leading-relaxed font-sans font-medium">
+                <p className="text-sm text-slate-700 leading-relaxed font-sans font-medium">
                   {comment.content}
                 </p>
               </div>

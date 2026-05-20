@@ -10,11 +10,11 @@ export default function PromisesGrid({ filteredPromises, viewMode, lang, t, rese
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
           </svg>
         </div>
-        <h3 className="text-base font-space font-bold text-slate-800 uppercase">{t.no_results}</h3>
+        <h3 className="text-lg font-space font-bold text-slate-800 uppercase">{t.no_results}</h3>
         <button 
           type="button"
           onClick={resetFilters}
-          className="mt-5 text-xs font-mono-tech font-bold bg-navy-flag hover:bg-navy-flag-dark text-white px-5 py-2.5 rounded-lg transition-all cursor-pointer border-none"
+          className="mt-5 text-sm font-mono-tech font-bold bg-navy-flag hover:bg-navy-flag-dark text-white px-5 py-2.5 rounded-lg transition-all cursor-pointer border-none"
         >
           {t.reset_filters}
         </button>
@@ -26,7 +26,7 @@ export default function PromisesGrid({ filteredPromises, viewMode, lang, t, rese
     <>
       {(isLoading || errorMessage) && (
         <div
-          className={`mb-4 flex items-center gap-2 rounded-lg border px-4 py-3 text-xs font-space ${
+          className={`mb-4 flex items-center gap-2 rounded-lg border px-4 py-3 text-sm font-space ${
             errorMessage
               ? "border-amber-200 bg-amber-50 text-amber-800"
               : "border-slate-200 bg-white text-slate-500"

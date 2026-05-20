@@ -17,7 +17,7 @@ export default function StatsBar({ stats, selectedStatus, setSelectedStatus, t }
             <span className="text-3xl md:text-4xl font-mono-tech font-bold text-slate-900">
               {stats.total}
             </span>
-            <span className="text-[10px] md:text-[11px] font-mono-tech font-bold text-slate-400 tracking-wider mt-1.5 uppercase">
+            <span className="text-xs font-mono-tech font-bold text-slate-400 tracking-wider mt-1.5 uppercase">
               {t.total_promises}
             </span>
           </button>
@@ -35,7 +35,7 @@ export default function StatsBar({ stats, selectedStatus, setSelectedStatus, t }
             <span className="text-3xl md:text-4xl font-mono-tech font-bold text-green-flag">
               {stats.fulfilled}
             </span>
-            <span className="text-[10px] md:text-[11px] font-mono-tech font-bold text-slate-400 tracking-wider mt-1.5 uppercase">
+            <span className="text-xs font-mono-tech font-bold text-slate-400 tracking-wider mt-1.5 uppercase">
               {t.fulfilled}
             </span>
           </button>
@@ -53,7 +53,7 @@ export default function StatsBar({ stats, selectedStatus, setSelectedStatus, t }
             <span className="text-3xl md:text-4xl font-mono-tech font-bold text-saffron">
               {stats.inProgress}
             </span>
-            <span className="text-[10px] md:text-[11px] font-mono-tech font-bold text-slate-400 tracking-wider mt-1.5 uppercase">
+            <span className="text-xs font-mono-tech font-bold text-slate-400 tracking-wider mt-1.5 uppercase">
               {t.in_progress}
             </span>
           </button>
@@ -71,7 +71,7 @@ export default function StatsBar({ stats, selectedStatus, setSelectedStatus, t }
             <span className="text-3xl md:text-4xl font-mono-tech font-bold text-slate-400">
               {stats.evaded}
             </span>
-            <span className="text-[10px] md:text-[11px] font-mono-tech font-bold text-slate-400 tracking-wider mt-1.5 uppercase">
+            <span className="text-xs font-mono-tech font-bold text-slate-400 tracking-wider mt-1.5 uppercase">
               {t.evaded}
             </span>
           </button>
@@ -89,7 +89,7 @@ export default function StatsBar({ stats, selectedStatus, setSelectedStatus, t }
             <span className="text-3xl md:text-4xl font-mono-tech font-bold text-navy-flag">
               {stats.pending}
             </span>
-            <span className="text-[10px] md:text-[11px] font-mono-tech font-bold text-slate-400 tracking-wider mt-1.5 uppercase">
+            <span className="text-xs font-mono-tech font-bold text-slate-400 tracking-wider mt-1.5 uppercase">
               {t.pending}
             </span>
           </button>
@@ -99,7 +99,7 @@ export default function StatsBar({ stats, selectedStatus, setSelectedStatus, t }
             <span className="text-3xl md:text-4xl font-mono-tech font-bold text-navy-flag">
               {stats.completionRate}%
             </span>
-            <span className="text-[10px] md:text-[11px] font-mono-tech font-bold text-slate-400 tracking-wider mt-1.5 uppercase">
+            <span className="text-xs font-mono-tech font-bold text-slate-400 tracking-wider mt-1.5 uppercase">
               {t.completion_rate}
             </span>
           </div>

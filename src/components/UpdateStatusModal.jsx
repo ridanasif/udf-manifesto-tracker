@@ -19,6 +19,14 @@ export default function UpdateStatusModal({ promise, user, lang, isOpen, onClose
         setErrorMsg("");
         setSuccessMsg("");
       });
+    } else if (!isOpen) {
+      Promise.resolve().then(() => {
+        setNewStatus("pending");
+        setSourceLink("");
+        setSubmitting(false);
+        setErrorMsg("");
+        setSuccessMsg("");
+      });
     }
   }, [isOpen, promise]);
 
@@ -132,7 +140,7 @@ export default function UpdateStatusModal({ promise, user, lang, isOpen, onClose
         
         {/* Header */}
         <div className="bg-navy-flag text-white px-6 py-4 flex items-center justify-between">
-          <span className="font-space font-bold uppercase tracking-wider text-xs flex items-center gap-2">
+          <span className="font-space font-bold uppercase tracking-wider text-sm flex items-center gap-2">
             <FaBalanceScale aria-hidden="true" className="text-white text-sm" /> UPDATE PROMISE STATUS
           </span>
           <button 
@@ -147,19 +155,19 @@ export default function UpdateStatusModal({ promise, user, lang, isOpen, onClose
         </div>
 
         <form onSubmit={handleStatusUpdate} className="p-6 space-y-4">
-          <h4 id="update-status-title" className="text-xs text-slate-500 font-mono-tech uppercase font-bold tracking-wider">
-            Target Promise: <span className="text-slate-800 font-space font-bold text-sm block mt-1 normal-case">{translatedTitle}</span>
+          <h4 id="update-status-title" className="text-sm text-slate-500 font-mono-tech uppercase font-bold tracking-wider">
+            Target Promise: <span className="text-slate-800 font-space font-bold text-base block mt-1 normal-case">{translatedTitle}</span>
           </h4>
 
           {errorMsg && (
-            <div role="alert" className="bg-rose-50 border border-rose-100 text-rose-600 rounded-lg p-3 text-xs font-space font-medium flex items-start gap-2">
+            <div role="alert" className="bg-rose-50 border border-rose-100 text-rose-600 rounded-lg p-3 text-sm font-space font-medium flex items-start gap-2">
               <span aria-hidden="true" className="w-1.5 h-1.5 rounded-full bg-rose-500 mt-1.5 flex-shrink-0"></span>
               {errorMsg}
             </div>
           )}
 
           {successMsg && (
-            <div role="status" className="bg-green-flag-light border border-green-flag/10 text-green-flag-dark rounded-lg p-3 text-xs font-space font-medium flex items-start gap-2">
+            <div role="status" className="bg-green-flag-light border border-green-flag/10 text-green-flag-dark rounded-lg p-3 text-sm font-space font-medium flex items-start gap-2">
               <span aria-hidden="true" className="w-1.5 h-1.5 rounded-full bg-green-flag mt-1.5 flex-shrink-0"></span>
               {successMsg}
             </div>
@@ -167,12 +175,12 @@ export default function UpdateStatusModal({ promise, user, lang, isOpen, onClose
 
           <div className="space-y-4 bg-slate-50 p-4 border border-slate-200 rounded-xl">
             <div>
-              <label htmlFor="new-status" className="block text-[9px] font-mono-tech uppercase font-bold text-slate-400 mb-1">Select New Status</label>
+              <label htmlFor="new-status" className="block text-xs font-mono-tech uppercase font-bold text-slate-400 mb-1">Select New Status</label>
               <select
                 id="new-status"
                 value={newStatus}
                 onChange={(e) => setNewStatus(e.target.value)}
-                className="w-full bg-white border border-slate-200 rounded-lg py-2.5 px-3 focus:outline-none focus:border-navy-flag/50 text-xs font-space font-bold text-slate-800"
+                className="w-full bg-white border border-slate-200 rounded-lg py-2.5 px-3 focus:outline-none focus:border-navy-flag/50 text-sm font-space font-bold text-slate-800"
               >
                 {STATUS_OPTIONS.map((status) => (
                   <option key={status.id} value={status.id}>
@@ -183,7 +191,7 @@ export default function UpdateStatusModal({ promise, user, lang, isOpen, onClose
             </div>
 
             <div>
-              <label htmlFor="source-link" className="block text-[9px] font-mono-tech uppercase font-bold text-slate-400 mb-1">Source Verification Link (Required)</label>
+              <label htmlFor="source-link" className="block text-xs font-mono-tech uppercase font-bold text-slate-400 mb-1">Source Verification Link (Required)</label>
               <input 
                 id="source-link"
                 type="url"
@@ -192,13 +200,13 @@ export default function UpdateStatusModal({ promise, user, lang, isOpen, onClose
                 placeholder="https://reputable-news-source.com/report"
                 value={sourceLink}
                 onChange={(e) => setSourceLink(e.target.value)}
-                className="w-full bg-white border border-slate-200 rounded-lg py-2.5 px-3 focus:outline-none focus:border-navy-flag/50 text-xs font-sans"
+                className="w-full bg-white border border-slate-200 rounded-lg py-2.5 px-3 focus:outline-none focus:border-navy-flag/50 text-sm font-sans"
               />
             </div>
           </div>
 
-          <div className="text-[10px] text-slate-600 font-sans leading-relaxed italic bg-amber-50 border border-amber-100 p-3 rounded-lg flex items-start gap-1.5">
-            <FaInfoCircle aria-hidden="true" className="text-amber-500 mt-0.5 flex-shrink-0 text-xs" />
+          <div className="text-xs text-slate-600 font-sans leading-relaxed italic bg-amber-50 border border-amber-100 p-3 rounded-lg flex items-start gap-1.5">
+            <FaInfoCircle aria-hidden="true" className="text-amber-500 mt-0.5 flex-shrink-0 text-sm" />
             <span>Traditional credentials limit submissions to 3 updates per week. Spammers or false flags will lead to immediate account bans.</span>
           </div>
 
@@ -207,7 +215,7 @@ export default function UpdateStatusModal({ promise, user, lang, isOpen, onClose
               type="button" 
               onClick={onClose}
               disabled={submitting}
-              className="border border-slate-200 hover:bg-slate-50 text-slate-600 px-4 py-2.5 rounded-lg text-xs font-mono-tech font-bold uppercase transition-all cursor-pointer bg-white"
+              className="border border-slate-200 hover:bg-slate-50 text-slate-600 px-4 py-2.5 rounded-lg text-sm font-mono-tech font-bold uppercase transition-all cursor-pointer bg-white"
             >
               Cancel
             </button>
@@ -215,7 +223,7 @@ export default function UpdateStatusModal({ promise, user, lang, isOpen, onClose
               type="submit"
               disabled={submitting || !!successMsg}
               aria-busy={submitting}
-              className="bg-navy-flag hover:bg-navy-flag-dark text-white rounded-lg px-5 py-2.5 text-xs font-mono-tech font-bold uppercase cursor-pointer border-none flex items-center justify-center gap-2 disabled:cursor-wait disabled:opacity-75"
+              className="bg-navy-flag hover:bg-navy-flag-dark text-white rounded-lg px-5 py-2.5 text-sm font-mono-tech font-bold uppercase cursor-pointer border-none flex items-center justify-center gap-2 disabled:cursor-wait disabled:opacity-75"
             >
               {submitting && <LoadingSpinner label="Submitting status update" />}
               {submitting ? "Submitting..." : "Save Change"}

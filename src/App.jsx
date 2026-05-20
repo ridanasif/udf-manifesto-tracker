@@ -1,5 +1,5 @@
 import { useCallback, useState, useMemo, useEffect } from "react";
-import { Routes, Route, Link } from "react-router-dom";
+import { Routes, Route, Link, useLocation } from "react-router-dom";
 import { PROMISES_DATA } from "./data/promises";
 import { supabase } from "./supabase";
 import { STATUS_DISPLAY, VALID_STATUSES } from "./constants";
@@ -62,6 +62,8 @@ const UI_TRANSLATIONS = {
 };
 
 function App() {
+  const location = useLocation();
+
   // English / Malayalam language toggle state
   const [lang, setLang] = useState("en");
   
@@ -104,6 +106,18 @@ function App() {
   useEffect(() => {
     document.documentElement.lang = lang === "ml" ? "ml" : "en";
   }, [lang]);
+
+  useEffect(() => {
+    window.scrollTo(0, 0);
+
+    Promise.resolve().then(() => {
+      setAuthOpen(false);
+      setActivePromiseForUpdate(null);
+      setSearchQuery("");
+      setSelectedCategory("All");
+      setSelectedStatus("All");
+    });
+  }, [location.pathname]);
 
   // 2. Fetch status updates from database to override local statuses
   const loadStatusUpdates = useCallback(async () => {
@@ -350,7 +364,7 @@ function App() {
             <p className="text-green-50">
               &copy; {new Date().getFullYear()} UDF Manifesto Tracker. {lang === "en" ? "All Rights Reserved." : "എല്ലാ അവകാശങ്ങളും നിക്ഷിപ്തം."}
             </p>
-            <div className="flex items-center gap-3 text-[10px] font-mono-tech uppercase tracking-wider text-green-200">
+            <div className="flex items-center gap-3 text-xs font-mono-tech uppercase tracking-wider text-green-200">
               <Link to="/privacy" className="hover:text-white hover:underline transition-colors no-underline">Privacy Policy</Link>
               <span className="text-green-300/40">|</span>
               <Link to="/data-deletion" className="hover:text-white hover:underline transition-colors no-underline">Data Deletion</Link>

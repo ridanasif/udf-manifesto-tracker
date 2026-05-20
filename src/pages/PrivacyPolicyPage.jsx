@@ -58,18 +58,18 @@ export default function PrivacyPolicyPage({ lang = "en" }) {
   const t = TRANSLATIONS[lang] || TRANSLATIONS.en;
 
   return (
-    <div className="w-full max-w-4xl mx-auto px-4 md:px-8 py-12 animate-fade-in text-slate-700 leading-relaxed font-sans font-medium text-sm">
+    <div className="w-full max-w-4xl mx-auto px-4 md:px-8 py-12 animate-fade-in text-slate-700 leading-relaxed font-sans font-medium text-base">
       {/* Header section */}
       <div className="flex items-center justify-between mb-8 border-b border-slate-200 pb-6">
         <button
           type="button"
           onClick={() => navigate("/")}
-          className="flex items-center gap-2 text-xs font-mono-tech font-bold text-slate-600 hover:text-slate-900 transition-all border-none bg-transparent cursor-pointer"
+          className="flex items-center gap-2 text-sm font-mono-tech font-bold text-slate-600 hover:text-slate-900 transition-all border-none bg-transparent cursor-pointer"
         >
           <FaArrowLeft className="text-slate-500 text-xs" />
           {t.backBtn}
         </button>
-        <span className="text-[10px] font-mono-tech font-bold text-slate-400 bg-slate-100 px-3 py-1 rounded-full border border-slate-200/50 flex items-center gap-1.5">
+        <span className="text-xs font-mono-tech font-bold text-slate-400 bg-slate-100 px-3 py-1 rounded-full border border-slate-200/50 flex items-center gap-1.5">
           <FaShieldAlt className="text-navy-flag" /> {t.badge}
         </span>
       </div>
@@ -79,7 +79,7 @@ export default function PrivacyPolicyPage({ lang = "en" }) {
           <h1 className="text-2xl md:text-3xl font-space font-bold text-slate-900">
             {t.title}
           </h1>
-          <p className="text-xs text-slate-400 font-mono-tech">{t.lastUpdated}</p>
+          <p className="text-sm text-slate-400 font-mono-tech">{t.lastUpdated}</p>
         </div>
 
         <p className="italic text-slate-500 bg-slate-50 border border-slate-200/50 p-4 rounded-xl">
@@ -89,7 +89,7 @@ export default function PrivacyPolicyPage({ lang = "en" }) {
         {/* Sections */}
         <div className="space-y-6">
           <section className="space-y-2">
-            <h2 className="text-base font-space font-bold text-slate-900 uppercase">{t.sec1Title}</h2>
+            <h2 className="text-lg font-space font-bold text-slate-900 uppercase">{t.sec1Title}</h2>
             <p>{t.sec1Desc}</p>
             <ul className="list-disc list-inside pl-4 space-y-1">
               <li>{t.sec1Item1}</li>
@@ -97,7 +97,7 @@ export default function PrivacyPolicyPage({ lang = "en" }) {
           </section>
 
           <section className="space-y-2">
-            <h2 className="text-base font-space font-bold text-slate-900 uppercase">{t.sec2Title}</h2>
+            <h2 className="text-lg font-space font-bold text-slate-900 uppercase">{t.sec2Title}</h2>
             <p>{t.sec2Desc}</p>
             <ul className="list-disc list-inside pl-4 space-y-1">
               <li>{t.sec2Item1}</li>
@@ -107,12 +107,12 @@ export default function PrivacyPolicyPage({ lang = "en" }) {
           </section>
 
           <section className="space-y-2">
-            <h2 className="text-base font-space font-bold text-slate-900 uppercase">{t.sec3Title}</h2>
+            <h2 className="text-lg font-space font-bold text-slate-900 uppercase">{t.sec3Title}</h2>
             <p>{t.sec3Desc}</p>
           </section>
 
           <section className="space-y-2">
-            <h2 className="text-base font-space font-bold text-slate-900 uppercase">{t.sec4Title}</h2>
+            <h2 className="text-lg font-space font-bold text-slate-900 uppercase">{t.sec4Title}</h2>
             <p>{t.sec4Desc1}</p>
             <p>
               {t.sec4Desc2}{" "}
@@ -123,7 +123,7 @@ export default function PrivacyPolicyPage({ lang = "en" }) {
           </section>
 
           <section className="space-y-2">
-            <h2 className="text-base font-space font-bold text-slate-900 uppercase">{t.sec5Title}</h2>
+            <h2 className="text-lg font-space font-bold text-slate-900 uppercase">{t.sec5Title}</h2>
             <p>
               {t.sec5Desc}{" "}
               <a href="mailto:ridhaanasif@gmail.com" className="text-navy-flag font-bold hover:underline">
@@ -137,7 +137,7 @@ export default function PrivacyPolicyPage({ lang = "en" }) {
           <button
             type="button"
             onClick={() => navigate("/")}
-            className="bg-navy-flag hover:bg-navy-flag-dark text-white rounded-lg py-2.5 px-6 text-xs font-mono-tech font-bold uppercase transition-all cursor-pointer border-none"
+            className="bg-navy-flag hover:bg-navy-flag-dark text-white rounded-lg py-2.5 px-6 text-sm font-mono-tech font-bold uppercase transition-all cursor-pointer border-none"
           >
             {t.acknowledgeBtn}
           </button>

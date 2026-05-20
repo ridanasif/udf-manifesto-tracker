@@ -32,7 +32,7 @@ export default function Hero({ lang, t }) {
         </h2>
         
         {/* Subtext */}
-        <p className="mt-4 text-sm md:text-lg text-slate-300 font-space max-w-2xl">
+        <p className="mt-4 text-base md:text-lg text-slate-300 font-space max-w-2xl">
           {t.tagline}
         </p>
 
@@ -40,38 +40,38 @@ export default function Hero({ lang, t }) {
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-6 mt-8 w-full max-w-4xl">
           {/* Card 1: Saffron */}
           <div className="bg-saffron text-left p-6 rounded-xl text-slate-950">
-            <span className="text-[10px] font-mono-tech font-bold uppercase flex items-center gap-1.5">
+            <span className="text-xs font-mono-tech font-bold uppercase flex items-center gap-1.5">
               <span className="w-1.5 h-1.5 rounded-full bg-slate-950"></span>
               {t.chief_minister}
             </span>
             <h3 className="text-xl md:text-2xl font-space font-bold mt-2">
               {cmName}
             </h3>
-            <p className="text-[10px] font-mono-tech mt-1.5 uppercase">{cmSub}</p>
+            <p className="text-xs font-mono-tech mt-1.5 uppercase">{cmSub}</p>
           </div>
 
           {/* Card 2: White */}
           <div className="bg-white text-left p-6 rounded-xl">
-            <span className="text-[10px] font-mono-tech font-bold uppercase text-navy-flag flex items-center gap-1.5">
+            <span className="text-xs font-mono-tech font-bold uppercase text-navy-flag flex items-center gap-1.5">
               <span className="w-1.5 h-1.5 rounded-full bg-navy-flag"></span>
               {t.days_in_office}
             </span>
             <h3 className="text-3xl md:text-4xl font-mono-tech font-bold text-navy-flag mt-1">
               {daysInOffice}
             </h3>
-            <p className="text-[10px] text-navy-flag font-mono-tech mt-1.5 uppercase">{daysSub}</p>
+            <p className="text-xs text-navy-flag font-mono-tech mt-1.5 uppercase">{daysSub}</p>
           </div>
 
           {/* Card 3: Green */}
           <div className="bg-green-flag text-left p-6 rounded-xl">
-            <span className="text-[10px] font-mono-tech font-bold uppercase text-white flex items-center gap-1.5">
+            <span className="text-xs font-mono-tech font-bold uppercase text-white flex items-center gap-1.5">
               <span className="w-1.5 h-1.5 rounded-full bg-white"></span>
               {t.days_remaining}
             </span>
             <h3 className="text-3xl md:text-4xl font-mono-tech font-bold text-white mt-1">
               {daysRemaining}
             </h3>
-            <p className="text-[10px] text-white font-mono-tech mt-1.5 uppercase">{remainingSub}</p>
+            <p className="text-xs text-white font-mono-tech mt-1.5 uppercase">{remainingSub}</p>
           </div>
         </div>
       </div>

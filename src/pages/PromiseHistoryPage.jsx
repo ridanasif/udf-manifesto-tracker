@@ -58,6 +58,13 @@ export default function PromiseHistoryPage({ allPromises, user, lang = "en", t, 
   const promise = allPromises.find(p => p.id === id);
   const pageT = PAGE_TRANSLATIONS[lang] || PAGE_TRANSLATIONS.en;
 
+  useEffect(() => {
+    Promise.resolve().then(() => {
+      setVoteError("");
+      setUpdateModalOpen(false);
+    });
+  }, [id]);
+
   const loadHistory = useCallback(async () => {
     setLoading(true);
     setLoadError("");
@@ -156,11 +163,11 @@ export default function PromiseHistoryPage({ allPromises, user, lang = "en", t, 
     return (
       <div className="max-w-4xl mx-auto px-4 py-20 text-center animate-fade-in">
         <h3 className="text-lg font-space font-bold text-slate-800 uppercase">{pageT.notFoundTitle}</h3>
-        <p className="text-slate-500 text-xs mt-2">{pageT.notFoundDesc}</p>
+        <p className="text-slate-500 text-sm mt-2">{pageT.notFoundDesc}</p>
         <button 
           type="button"
           onClick={() => navigate("/")} 
-          className="mt-6 px-4 py-2 bg-navy-flag text-white text-xs font-mono-tech font-bold uppercase rounded-lg border-none cursor-pointer flex items-center justify-center gap-1.5 mx-auto"
+          className="mt-6 px-4 py-2 bg-navy-flag text-white text-sm font-mono-tech font-bold uppercase rounded-lg border-none cursor-pointer flex items-center justify-center gap-1.5 mx-auto"
         >
           <FaArrowLeft /> {pageT.goHome}
         </button>
@@ -181,12 +188,12 @@ export default function PromiseHistoryPage({ allPromises, user, lang = "en", t, 
         <button
           type="button"
           onClick={() => navigate("/")}
-          className="flex items-center gap-2 text-xs font-mono-tech font-bold text-slate-600 hover:text-slate-900 transition-all border-none bg-transparent cursor-pointer"
+          className="flex items-center gap-2 text-sm font-mono-tech font-bold text-slate-600 hover:text-slate-900 transition-all border-none bg-transparent cursor-pointer"
         >
           <FaArrowLeft className="text-slate-500 text-xs" />
           {pageT.backBtn}
         </button>
-        <span className="text-[10px] font-mono-tech font-bold text-slate-400 bg-slate-100 px-3 py-1 rounded-full border border-slate-200/50">
+        <span className="text-xs font-mono-tech font-bold text-slate-400 bg-slate-100 px-3 py-1 rounded-full border border-slate-200/50">
           {pageT.badge}
         </span>
       </div>
@@ -196,10 +203,10 @@ export default function PromiseHistoryPage({ allPromises, user, lang = "en", t, 
         
         {/* Header Tags */}
         <div className="flex flex-wrap items-center gap-2">
-          <span className="text-[10px] font-mono-tech font-bold uppercase tracking-wider text-slate-400 bg-slate-100 px-2.5 py-1 rounded">
+          <span className="text-xs font-mono-tech font-bold uppercase tracking-wider text-slate-400 bg-slate-100 px-2.5 py-1 rounded">
             {categoryLabel}
           </span>
-          <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded text-[10px] font-mono-tech font-bold uppercase tracking-wider border ${
+          <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded text-xs font-mono-tech font-bold uppercase tracking-wider border ${
             promise.status === 'fulfilled' ? 'bg-green-flag-light text-green-flag-dark border-green-flag/20' : 
             promise.status === 'in_progress' ? 'bg-saffron-light text-saffron-dark border-saffron/20' : 
             'bg-navy-flag-light text-navy-flag-dark border-navy-flag/15'
@@ -219,15 +226,15 @@ export default function PromiseHistoryPage({ allPromises, user, lang = "en", t, 
         </h2>
 
         {/* Description */}
-        <p className="text-slate-700 text-sm leading-relaxed font-sans font-medium bg-slate-50 p-4 rounded-xl border border-slate-200/40">
+        <p className="text-slate-700 text-base leading-relaxed font-sans font-medium bg-slate-50 p-4 rounded-xl border border-slate-200/40">
           {lang === 'en' ? promise.description : promise.description_ml}
         </p>
 
         {/* Bottom Panel containing Department info and Status Edit Trigger */}
         <div className="pt-5 border-t border-slate-100 flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div>
-            <span className="block text-[9px] font-mono-tech uppercase font-bold text-slate-400">{t.department}</span>
-            <span className="text-xs text-slate-800 font-bold font-space mt-1 block">{deptLabel || "TBD"}</span>
+            <span className="block text-xs font-mono-tech uppercase font-bold text-slate-400">{t.department}</span>
+            <span className="text-sm text-slate-800 font-bold font-space mt-1 block">{deptLabel || "TBD"}</span>
           </div>
 
           <div className="flex md:justify-end items-center flex-shrink-0">
@@ -235,13 +242,13 @@ export default function PromiseHistoryPage({ allPromises, user, lang = "en", t, 
               <button
                 type="button"
                 onClick={() => setUpdateModalOpen(true)}
-                className="w-full md:w-auto bg-navy-flag hover:bg-navy-flag-dark text-white rounded-lg py-2.5 px-5 text-xs font-mono-tech font-bold uppercase cursor-pointer border-none flex items-center justify-center gap-1.5 transition-all"
+                className="w-full md:w-auto bg-navy-flag hover:bg-navy-flag-dark text-white rounded-lg py-2.5 px-5 text-sm font-mono-tech font-bold uppercase cursor-pointer border-none flex items-center justify-center gap-1.5 transition-all"
               >
                 <FaBalanceScale /> {pageT.submitLog}
               </button>
             ) : (
               <div className="text-[11px] text-slate-500 font-space font-medium bg-slate-100 border border-slate-200/50 px-4 py-2.5 rounded-xl w-full text-center flex items-center justify-center gap-1.5 animate-fade-in">
-                <FaLock className="text-slate-400 text-xs" /> {pageT.loginRequired}
+                <FaLock className="text-slate-400 text-sm" /> {pageT.loginRequired}
               </div>
             )}
           </div>
@@ -251,27 +258,27 @@ export default function PromiseHistoryPage({ allPromises, user, lang = "en", t, 
 
       {/* Timeline Section */}
       <div className="space-y-6">
-        <h3 className="text-xs font-mono-tech font-bold uppercase tracking-wider text-slate-800 flex items-center gap-1.5">
+        <h3 className="text-sm font-mono-tech font-bold uppercase tracking-wider text-slate-800 flex items-center gap-1.5">
           <FaHistory className="text-navy-flag text-sm" /> {pageT.timelineTitle}
         </h3>
 
         {loading ? (
-          <div className="py-8 text-center text-slate-400 font-mono-tech text-xs flex items-center justify-center gap-2" role="status">
+          <div className="py-8 text-center text-slate-400 font-mono-tech text-sm flex items-center justify-center gap-2" role="status">
             <LoadingSpinner label={pageT.loading} className="text-navy-flag" />
             {pageT.loading}
           </div>
         ) : loadError ? (
-          <div role="alert" className="text-amber-800 text-xs font-space p-8 bg-amber-50 border border-amber-200 rounded-2xl text-center animate-fade-in">
+          <div role="alert" className="text-amber-800 text-sm font-space p-8 bg-amber-50 border border-amber-200 rounded-2xl text-center animate-fade-in">
             {loadError}
           </div>
         ) : history.length === 0 ? (
-          <div className="text-slate-400 text-xs font-space italic p-8 bg-white border border-slate-200 rounded-2xl text-center animate-fade-in">
+          <div className="text-slate-400 text-sm font-space italic p-8 bg-white border border-slate-200 rounded-2xl text-center animate-fade-in">
             {pageT.emptyState}
           </div>
         ) : (
           <div className="relative border-l border-slate-200 ml-4 pl-8 py-2 space-y-8 animate-fade-in">
             {voteError && (
-              <div role="alert" className="bg-rose-50 border border-rose-100 text-rose-600 rounded-lg p-3 text-xs font-space font-medium">
+              <div role="alert" className="bg-rose-50 border border-rose-100 text-rose-600 rounded-lg p-3 text-sm font-space font-medium">
                 {voteError}
               </div>
             )}
@@ -303,20 +310,20 @@ export default function PromiseHistoryPage({ allPromises, user, lang = "en", t, 
 
                   <div className="bg-white border border-slate-200 rounded-2xl p-5 flex flex-col md:flex-row items-start justify-between gap-4 hover:shadow-xs transition-all duration-200">
                     <div className="space-y-2 flex-1">
-                      <div className="flex flex-wrap items-center gap-2 text-xs">
+                      <div className="flex flex-wrap items-center gap-2 text-sm">
                         <span className="font-space font-bold text-slate-800">{edit.user_name}</span>
-                        <span className="text-slate-400 text-[10px] font-mono-tech font-bold bg-slate-50 px-2 py-0.5 rounded border border-slate-200/50">
+                        <span className="text-slate-400 text-xs font-mono-tech font-bold bg-slate-50 px-2 py-0.5 rounded border border-slate-200/50">
                           {new Date(edit.created_at).toLocaleString()}
                         </span>
                       </div>
                       
-                      <div className="text-xs font-space flex items-center gap-2">
+                      <div className="text-sm font-space flex items-center gap-2">
                         <span className="text-slate-400">{pageT.changedProgress}</span>
                         <span className="font-bold text-navy-flag uppercase">{statusTxt}</span>
                       </div>
 
-                      <div className="text-xs pt-1.5 flex items-start gap-1.5">
-                        <span className="text-[10px] font-mono-tech font-bold text-slate-400 uppercase mt-0.5">{pageT.verificationSource}</span>
+                      <div className="text-sm pt-1.5 flex items-start gap-1.5">
+                        <span className="text-xs font-mono-tech font-bold text-slate-400 uppercase mt-0.5">{pageT.verificationSource}</span>
                         <a 
                           href={edit.source_link} 
                           target="_blank" 
@@ -346,7 +353,7 @@ export default function PromiseHistoryPage({ allPromises, user, lang = "en", t, 
                         <FaArrowUp className="w-3 h-3" />
                       </button>
                       
-                      <span className={`text-xs font-mono-tech font-bold px-2 ${voteScore > 0 ? "text-green-flag" : voteScore < 0 ? "text-rose-500" : "text-slate-500"}`}>
+                      <span className={`text-sm font-mono-tech font-bold px-2 ${voteScore > 0 ? "text-green-flag" : voteScore < 0 ? "text-rose-500" : "text-slate-500"}`}>
                         {voteScore > 0 ? `+${voteScore}` : voteScore}
                       </span>
 

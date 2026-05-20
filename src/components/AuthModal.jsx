@@ -33,6 +33,15 @@ export default function AuthModal({ isOpen, onClose, lang = "en" }) {
   const t = TRANSLATIONS[lang] || TRANSLATIONS.en;
 
   useEffect(() => {
+    if (!isOpen) {
+      Promise.resolve().then(() => {
+        setLoadingProvider("");
+        setErrorMsg("");
+      });
+    }
+  }, [isOpen]);
+
+  useEffect(() => {
     if (!isOpen) return undefined;
 
     const onKeyDown = (event) => {
@@ -88,7 +97,7 @@ export default function AuthModal({ isOpen, onClose, lang = "en" }) {
         
         {/* Header Banner */}
         <div className="bg-navy-flag text-white px-6 py-4 flex items-center justify-between">
-          <span className="font-space font-bold uppercase tracking-wider text-xs flex items-center gap-2">
+          <span className="font-space font-bold uppercase tracking-wider text-sm flex items-center gap-2">
             <FaLock aria-hidden="true" className="text-white text-xs" />
             {t.header}
           </span>
@@ -105,16 +114,16 @@ export default function AuthModal({ isOpen, onClose, lang = "en" }) {
 
         <div className="p-6 text-center space-y-6">
           <div className="space-y-2">
-            <h3 id="auth-modal-title" className="text-base font-space font-bold text-slate-900">
+            <h3 id="auth-modal-title" className="text-lg font-space font-bold text-slate-900">
               {t.title}
             </h3>
-            <p id="auth-modal-description" className="text-xs text-slate-500 font-sans leading-relaxed">
+            <p id="auth-modal-description" className="text-sm text-slate-500 font-sans leading-relaxed">
               {t.subtitle}
             </p>
           </div>
 
           {errorMsg && (
-            <div role="alert" className="bg-rose-50 border border-rose-100 text-rose-600 rounded-lg p-3 text-xs font-space font-medium text-left flex items-start gap-2 animate-fade-in">
+            <div role="alert" className="bg-rose-50 border border-rose-100 text-rose-600 rounded-lg p-3 text-sm font-space font-medium text-left flex items-start gap-2 animate-fade-in">
               <span aria-hidden="true" className="w-1.5 h-1.5 rounded-full bg-rose-500 mt-1.5 flex-shrink-0"></span>
               {errorMsg}
             </div>
@@ -127,7 +136,7 @@ export default function AuthModal({ isOpen, onClose, lang = "en" }) {
               onClick={() => handleOAuthLogin("google")}
               disabled={!!loadingProvider}
               aria-busy={loadingProvider === "google"}
-              className="w-full border border-slate-200 hover:border-slate-300 hover:bg-slate-50 text-slate-700 py-3 rounded-xl text-xs font-space font-bold flex items-center justify-center gap-2.5 cursor-pointer bg-white transition-all interactive-card disabled:cursor-wait disabled:opacity-70"
+              className="w-full border border-slate-200 hover:border-slate-300 hover:bg-slate-50 text-slate-700 py-3 rounded-xl text-sm font-space font-bold flex items-center justify-center gap-2.5 cursor-pointer bg-white transition-all interactive-card disabled:cursor-wait disabled:opacity-70"
             >
               {loadingProvider === "google" ? (
                 <LoadingSpinner label={t.openingGoogle} className="text-rose-500" />
@@ -142,7 +151,7 @@ export default function AuthModal({ isOpen, onClose, lang = "en" }) {
               onClick={() => handleOAuthLogin("facebook")}
               disabled={!!loadingProvider}
               aria-busy={loadingProvider === "facebook"}
-              className="w-full border border-slate-200 hover:border-slate-300 hover:bg-slate-50 text-slate-700 py-3 rounded-xl text-xs font-space font-bold flex items-center justify-center gap-2.5 cursor-pointer bg-white transition-all interactive-card disabled:cursor-wait disabled:opacity-70"
+              className="w-full border border-slate-200 hover:border-slate-300 hover:bg-slate-50 text-slate-700 py-3 rounded-xl text-sm font-space font-bold flex items-center justify-center gap-2.5 cursor-pointer bg-white transition-all interactive-card disabled:cursor-wait disabled:opacity-70"
             >
               {loadingProvider === "facebook" ? (
                 <LoadingSpinner label={t.openingFacebook} className="text-blue-600" />
@@ -154,8 +163,8 @@ export default function AuthModal({ isOpen, onClose, lang = "en" }) {
           </div>
 
           <div className="border-t border-slate-100 pt-4 flex items-start justify-center gap-2">
-            <FaLock aria-hidden="true" className="text-slate-400 text-[10px] mt-0.5 flex-shrink-0" />
-            <p className="text-[10px] text-slate-400 font-mono-tech leading-normal text-left">
+            <FaLock aria-hidden="true" className="text-slate-400 text-xs mt-0.5 flex-shrink-0" />
+            <p className="text-xs text-slate-400 font-mono-tech leading-normal text-left">
               {t.footer}
             </p>
           </div>

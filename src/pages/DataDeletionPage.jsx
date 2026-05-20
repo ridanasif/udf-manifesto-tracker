@@ -110,18 +110,18 @@ export default function DataDeletionPage({ user, onSignOut, lang = "en" }) {
   const identityName = user ? (user.user_metadata?.full_name || user.email) : "";
 
   return (
-    <div className="w-full max-w-4xl mx-auto px-4 md:px-8 py-12 animate-fade-in text-slate-700 leading-relaxed font-sans font-medium text-sm">
+    <div className="w-full max-w-4xl mx-auto px-4 md:px-8 py-12 animate-fade-in text-slate-700 leading-relaxed font-sans font-medium text-base">
       {/* Header section */}
       <div className="flex items-center justify-between mb-8 border-b border-slate-200 pb-6">
         <button
           type="button"
           onClick={() => navigate("/")}
-          className="flex items-center gap-2 text-xs font-mono-tech font-bold text-slate-600 hover:text-slate-900 transition-all border-none bg-transparent cursor-pointer"
+          className="flex items-center gap-2 text-sm font-mono-tech font-bold text-slate-600 hover:text-slate-900 transition-all border-none bg-transparent cursor-pointer"
         >
           <FaArrowLeft className="text-slate-500 text-xs" />
           {t.backBtn}
         </button>
-        <span className="text-[10px] font-mono-tech font-bold text-slate-400 bg-slate-100 px-3 py-1 rounded-full border border-slate-200/50 flex items-center gap-1.5">
+        <span className="text-xs font-mono-tech font-bold text-slate-400 bg-slate-100 px-3 py-1 rounded-full border border-slate-200/50 flex items-center gap-1.5">
           <FaTrashAlt className="text-rose-500" /> {t.badge}
         </span>
       </div>
@@ -132,7 +132,7 @@ export default function DataDeletionPage({ user, onSignOut, lang = "en" }) {
           <h1 className="text-2xl md:text-3xl font-space font-bold text-slate-900">
             {t.title}
           </h1>
-          <p className="text-xs text-slate-400 font-mono-tech">{t.subtitle}</p>
+          <p className="text-sm text-slate-400 font-mono-tech">{t.subtitle}</p>
         </div>
 
         <p className="bg-slate-50 border border-slate-200/50 p-4 rounded-xl">
@@ -142,21 +142,21 @@ export default function DataDeletionPage({ user, onSignOut, lang = "en" }) {
         {/* Dynamic Deletion Action for Logged In User */}
         {user ? (
           <div className="border border-rose-200 bg-rose-50/30 rounded-2xl p-6 space-y-4">
-            <h3 className="text-sm font-space font-bold text-rose-700 uppercase flex items-center gap-2">
+            <h3 className="text-base font-space font-bold text-rose-700 uppercase flex items-center gap-2">
               <FaExclamationTriangle className="text-rose-500 text-base" /> {t.deleteBoxTitle}
             </h3>
-            <p className="text-slate-600 text-xs leading-relaxed">
+            <p className="text-slate-600 text-sm leading-relaxed">
               {t.deleteBoxDesc.replace("{identity}", identityName)}
             </p>
 
             {errorMsg && (
-              <div role="alert" className="bg-rose-100 border border-rose-200 text-rose-700 rounded-lg p-3 text-xs">
+              <div role="alert" className="bg-rose-100 border border-rose-200 text-rose-700 rounded-lg p-3 text-sm">
                 {errorMsg}
               </div>
             )}
 
             {success && (
-              <div role="status" className="bg-green-100 border border-green-200 text-green-700 rounded-lg p-3 text-xs flex items-center gap-2">
+              <div role="status" className="bg-green-100 border border-green-200 text-green-700 rounded-lg p-3 text-sm flex items-center gap-2">
                 <FaCheckCircle className="text-green-600" /> {t.successMsg}
               </div>
             )}
@@ -166,14 +166,14 @@ export default function DataDeletionPage({ user, onSignOut, lang = "en" }) {
               onClick={handleRequestDeletion}
               disabled={loading || success}
               aria-busy={loading}
-              className="bg-rose-600 hover:bg-rose-700 text-white rounded-lg py-2.5 px-6 text-xs font-mono-tech font-bold uppercase transition-all cursor-pointer border-none flex items-center gap-2 disabled:cursor-wait disabled:opacity-75"
+              className="bg-rose-600 hover:bg-rose-700 text-white rounded-lg py-2.5 px-6 text-sm font-mono-tech font-bold uppercase transition-all cursor-pointer border-none flex items-center gap-2 disabled:cursor-wait disabled:opacity-75"
             >
               {loading && <LoadingSpinner label={t.deletingBtn} />}
               {loading ? t.deletingBtn : t.deleteBtn}
             </button>
           </div>
         ) : (
-          <div className="bg-slate-50 border border-slate-200 p-5 rounded-2xl text-center text-xs text-slate-500 font-space flex items-center justify-center gap-2 animate-fade-in">
+          <div className="bg-slate-50 border border-slate-200 p-5 rounded-2xl text-center text-sm text-slate-500 font-space flex items-center justify-center gap-2 animate-fade-in">
             <FaInfoCircle className="text-slate-400 text-sm flex-shrink-0" />
             <span>{t.noUserText}</span>
           </div>
@@ -182,7 +182,7 @@ export default function DataDeletionPage({ user, onSignOut, lang = "en" }) {
         {/* Standard Manual Instruction list for Meta reviewer */}
         <div className="space-y-6 pt-4 border-t border-slate-100">
           <section className="space-y-2">
-            <h2 className="text-base font-space font-bold text-slate-900 uppercase">{t.manualRevokeTitle}</h2>
+            <h2 className="text-lg font-space font-bold text-slate-900 uppercase">{t.manualRevokeTitle}</h2>
             <ol className="list-decimal list-inside pl-4 space-y-2">
               <li>{t.manualRevokeStep1}</li>
               <li>{t.manualRevokeStep2}</li>
@@ -192,14 +192,14 @@ export default function DataDeletionPage({ user, onSignOut, lang = "en" }) {
           </section>
 
           <section className="space-y-2">
-            <h2 className="text-base font-space font-bold text-slate-900 uppercase">{t.supportTitle}</h2>
+            <h2 className="text-lg font-space font-bold text-slate-900 uppercase">{t.supportTitle}</h2>
             <p>
               {t.supportDesc}
             </p>
             <a href="mailto:ridhaanasif@gmail.com" className="text-navy-flag font-bold hover:underline">
               ridhaanasif@gmail.com
             </a>
-            <p className="text-xs text-slate-400 mt-1">{t.supportNote}</p>
+            <p className="text-sm text-slate-400 mt-1">{t.supportNote}</p>
           </section>
         </div>
 
