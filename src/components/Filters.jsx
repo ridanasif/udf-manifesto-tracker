@@ -51,7 +51,7 @@ export default function Filters({
           <div className="flex items-center gap-1 bg-slate-50 border border-slate-200 rounded-lg p-0.5">
             {[
               { id: "All", label_en: "All", label_ml: "എല്ലാം" },
-              { id: "fulfilled", label_en: "Fulfilled", label_ml: "നടപ്പിലായത്" },
+              { id: "fulfilled", label_en: "Implemented", label_ml: "നടപ്പിലായത്" },
               { id: "in_progress", label_en: "In Progress", label_ml: "പുരോഗതിയിൽ" },
               { id: "pending", label_en: "Pending", label_ml: "ബാക്കി" },
               { id: "evaded", label_en: "Bypassed", label_ml: "ഉപേക്ഷിച്ചത്" }

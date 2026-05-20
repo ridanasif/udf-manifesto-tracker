@@ -1,5 +1,7 @@
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useEffect } from "react";
+import { Routes, Route, Link } from "react-router-dom";
 import { PROMISES_DATA } from "./data/promises";
+import { supabase } from "./supabase";
 
 // Modular UI Component Imports
 import Navbar from "./components/Navbar";
@@ -7,6 +9,14 @@ import Hero from "./components/Hero";
 import StatsBar from "./components/StatsBar";
 import Filters from "./components/Filters";
 import PromisesGrid from "./components/PromisesGrid";
+import AuthModal from "./components/AuthModal";
+
+// Separate Aesthetic Pages
+import PromiseHistoryPage from "./pages/PromiseHistoryPage";
+import PromiseCommentsPage from "./pages/PromiseCommentsPage";
+import UpdateStatusModal from "./components/UpdateStatusModal";
+import PrivacyPolicyPage from "./pages/PrivacyPolicyPage";
+import DataDeletionPage from "./pages/DataDeletionPage";
 
 // Flat Translations Map for English and Malayalam localization
 const UI_TRANSLATIONS = {
@@ -18,7 +28,7 @@ const UI_TRANSLATIONS = {
     days_in_office: "DAYS IN OFFICE",
     days_remaining: "DAYS REMAINING",
     total_promises: "KEY PROMISES",
-    fulfilled: "FULFILLED",
+    fulfilled: "IMPLEMENTED",
     in_progress: "IN PROGRESS",
     pending: "PENDING",
     evaded: "BYPASSED",
@@ -60,24 +70,93 @@ function App() {
   const [selectedStatus, setSelectedStatus] = useState("All");
   const [viewMode, setViewMode] = useState("grid"); // grid or list
 
+  // Authentication & Dynamic Overrides States
+  const [user, setUser] = useState(null);
+  const [authOpen, setAuthOpen] = useState(false);
+  const [updatesList, setUpdatesList] = useState([]);
+  const [activePromiseForUpdate, setActivePromiseForUpdate] = useState(null);
+
   const t = UI_TRANSLATIONS[lang];
 
-  // Flatten the promises array from nested categories structure for quick query computation
+  // 1. Listen for user auth sessions
+  useEffect(() => {
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setUser(session?.user ?? null);
+    });
+
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      setUser(session?.user ?? null);
+    });
+
+    return () => subscription.unsubscribe();
+  }, []);
+
+  // 2. Fetch status updates from database to override local statuses
+  const loadStatusUpdates = async () => {
+    try {
+      const { data, error } = await supabase
+        .from("updates")
+        .select("promise_id, new_status")
+        .order("created_at", { ascending: true }); // older first, so newer overwrites
+
+      if (error) throw error;
+      setUpdatesList(data || []);
+    } catch (err) {
+      console.error("Failed to load community status updates:", err.message);
+    }
+  };
+
+  useEffect(() => {
+    loadStatusUpdates();
+  }, []);
+
+  // 3. Flatten the promises array from nested categories structure and apply live overrides
   const allPromises = useMemo(() => {
     const list = [];
+    const statusMap = {};
+    
+    // Build a map of latest status from database
+    updatesList.forEach(up => {
+      statusMap[up.promise_id] = up.new_status;
+    });
+
     PROMISES_DATA.forEach(catGroup => {
       catGroup.promises.forEach(p => {
+        const dbStatus = statusMap[p.id];
+        
+        let statusLabel = p.statusLabel;
+        let statusLabel_ml = p.statusLabel_ml;
+
+        if (dbStatus) {
+          if (dbStatus === "fulfilled") {
+            statusLabel = "Implemented";
+            statusLabel_ml = "നടപ്പിലായത്";
+          } else if (dbStatus === "in_progress") {
+            statusLabel = "In Progress";
+            statusLabel_ml = "പുരോഗതിയിൽ";
+          } else if (dbStatus === "evaded") {
+            statusLabel = "Bypassed";
+            statusLabel_ml = "ഉപേക്ഷിച്ചത്";
+          } else {
+            statusLabel = "Pending";
+            statusLabel_ml = "ബാക്കിനിൽക്കുന്നത്";
+          }
+        }
+
         list.push({
           ...p,
+          status: dbStatus || p.status,
+          statusLabel,
+          statusLabel_ml,
           category: catGroup.category,
           category_ml: catGroup.category_ml
         });
       });
     });
     return list;
-  }, []);
+  }, [updatesList]);
 
-  // Compute stats metrics dynamically from the active JSON values
+  // Compute stats metrics dynamically from the active live data
   const stats = useMemo(() => {
     const total = allPromises.length;
     const fulfilled = allPromises.filter(p => p.status === "fulfilled").length;
@@ -113,102 +192,152 @@ function App() {
     return counts;
   }, [allPromises]);
 
-  // Dynamic filter processing
+  // Filter promises dynamically based on query criteria
   const filteredPromises = useMemo(() => {
-    let list = [...allPromises];
+    return allPromises.filter(p => {
+      const query = searchQuery.toLowerCase().trim();
+      const matchesSearch = !query || 
+        p.title.toLowerCase().includes(query) ||
+        p.title_ml.toLowerCase().includes(query) ||
+        p.description.toLowerCase().includes(query) ||
+        p.description_ml.toLowerCase().includes(query) ||
+        p.category.toLowerCase().includes(query) ||
+        p.category_ml.toLowerCase().includes(query);
 
-    // Search query filter matching English and Malayalam values
-    if (searchQuery.trim() !== "") {
-      const q = searchQuery.toLowerCase();
-      list = list.filter(p => 
-        p.title.toLowerCase().includes(q) || 
-        p.title_ml.toLowerCase().includes(q) ||
-        p.description.toLowerCase().includes(q) || 
-        p.description_ml.toLowerCase().includes(q)
-      );
-    }
+      const matchesCategory = selectedCategory === "All" || p.category === selectedCategory;
+      const matchesStatus = selectedStatus === "All" || p.status === selectedStatus;
 
-    // Category filter
-    if (selectedCategory !== "All") {
-      list = list.filter(p => p.category === selectedCategory);
-    }
-
-    // Status filter
-    if (selectedStatus !== "All") {
-      list = list.filter(p => p.status === selectedStatus);
-    }
-
-    return list;
+      return matchesSearch && matchesCategory && matchesStatus;
+    });
   }, [allPromises, searchQuery, selectedCategory, selectedStatus]);
 
-  // Reset helper
   const handleResetFilters = () => {
     setSearchQuery("");
     setSelectedCategory("All");
     setSelectedStatus("All");
   };
 
+  const handleSignOut = async () => {
+    await supabase.auth.signOut();
+    setUser(null);
+  };
+
+  const handlePromiseUpdated = (promiseId, newStatus) => {
+    loadStatusUpdates();
+  };
+
   return (
-    <div className="min-h-screen flex flex-col font-sans relative antialiased select-none">
+    <div className="min-h-screen bg-slate-50 flex flex-col font-sans selection:bg-navy-flag selection:text-white antialiased">
       
-      {/* Combined Header (Sticky Top, Disclaimer + Navigation Row, no shadow, no blur, EN / മലയാളം toggle) */}
-      <Navbar lang={lang} setLang={setLang} t={t} />
-
-      {/* 3. Hero Section (Misty Munnar Hills, Flat Sequence Term Cards) */}
-      <Hero lang={lang} t={t} />
-
-      {/* 4. Flat Dynamic Stats Counters */}
-      <StatsBar 
-        stats={stats} 
-        selectedStatus={selectedStatus} 
-        setSelectedStatus={setSelectedStatus} 
+      {/* Pinned Sticky Header */}
+      <Navbar 
+        lang={lang} 
+        setLang={setLang} 
         t={t} 
+        user={user}
+        onOpenAuth={() => setAuthOpen(true)}
+        onSignOut={handleSignOut}
       />
 
-      {/* 5. Main Content Filters & Grid */}
-      <main className="flex-grow max-w-7xl w-full mx-auto px-4 md:px-8 py-12">
-        
-        {/* Title */}
-        <div className="text-center mb-8">
-          <h2 className="text-2xl md:text-3xl font-space font-bold tracking-widest text-slate-900 uppercase">
-            {lang === "en" ? "UDF'S KEY PROMISES" : "യു.ഡി.എഫ് മുഖ്യ വാഗ്ദാനങ്ങൾ"}
-          </h2>
-          <div className="w-12 h-1 bg-navy-flag mx-auto mt-2 rounded"></div>
-        </div>
+      <Routes>
+        {/* Main Dashboard / Home Route */}
+        <Route path="/" element={
+          <>
+            {/* Hero Header Section */}
+            <Hero lang={lang} t={t} />
 
-        {/* Dynamic Filters Component */}
-        <Filters 
-          searchQuery={searchQuery}
-          setSearchQuery={setSearchQuery}
-          selectedCategory={selectedCategory}
-          setSelectedCategory={setSelectedCategory}
-          selectedStatus={selectedStatus}
-          setSelectedStatus={setSelectedStatus}
-          viewMode={viewMode}
-          setViewMode={setViewMode}
-          categories={categoriesList}
-          categoryCounts={categoryCounts}
-          t={t}
-          lang={lang}
-        />
+            {/* Main Page Content */}
+            <main className="flex-1 w-full max-w-7xl mx-auto px-4 md:px-8 py-10 relative z-30">
+              
+              {/* Dynamic Analytics Stats Counter */}
+              <div className="mb-10">
+                <StatsBar 
+                  stats={stats} 
+                  selectedStatus={selectedStatus} 
+                  setSelectedStatus={setSelectedStatus} 
+                  t={t} 
+                />
+              </div>
 
-        {/* Dynamic flat promises grid */}
-        <PromisesGrid 
-          filteredPromises={filteredPromises}
-          viewMode={viewMode}
-          lang={lang}
-          t={t}
-          resetFilters={handleResetFilters}
-        />
+              {/* Dynamic Filtering Panel */}
+              <Filters 
+                searchQuery={searchQuery}
+                setSearchQuery={setSearchQuery}
+                selectedCategory={selectedCategory}
+                setSelectedCategory={setSelectedCategory}
+                selectedStatus={selectedStatus}
+                setSelectedStatus={setSelectedStatus}
+                viewMode={viewMode}
+                setViewMode={setViewMode}
+                categories={categoriesList}
+                categoryCounts={categoryCounts}
+                t={t}
+                lang={lang}
+              />
 
-      </main>
+              {/* Promises Presentation Grid */}
+              <PromisesGrid 
+                filteredPromises={filteredPromises}
+                viewMode={viewMode}
+                lang={lang}
+                t={t}
+                resetFilters={handleResetFilters}
+                onOpenUpdateStatus={(promise) => {
+                  if (user) {
+                    setActivePromiseForUpdate(promise);
+                  } else {
+                    setAuthOpen(true);
+                  }
+                }}
+              />
 
-      {/* 6. Footer (Indian Flag Green background, flat design credits linked to Ridan Asif) */}
+            </main>
+          </>
+        } />
+
+        {/* Verification History Timeline Page */}
+        <Route path="/promise/:id/history" element={
+          <div className="flex-1">
+            <PromiseHistoryPage 
+              allPromises={allPromises}
+              user={user}
+              lang={lang}
+              t={t}
+              onPromiseUpdated={handlePromiseUpdated}
+            />
+          </div>
+        } />
+
+        {/* Public Citizen Deliberation Comments Page */}
+        <Route path="/promise/:id/comments" element={
+          <div className="flex-1">
+            <PromiseCommentsPage 
+              allPromises={allPromises}
+              user={user}
+              lang={lang}
+              t={t}
+            />
+          </div>
+        } />
+
+        {/* Compliance Pages */}
+        <Route path="/privacy" element={<PrivacyPolicyPage lang={lang} />} />
+        <Route path="/data-deletion" element={<DataDeletionPage user={user} onSignOut={handleSignOut} />} />
+      </Routes>
+
+      {/* Footer */}
       <footer className="bg-green-flag text-white py-12 px-4 md:px-8 relative">
         <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-6 text-xs md:text-sm">
-          <p className="text-green-50">
-            &copy; {new Date().getFullYear()} {lang === "en" ? "UDF MANIFESTO TRACKER." : "യു.ഡി.എഫ് പ്രകടനപത്രിക ട്രാക്കർ."} {lang === "en" ? "All Rights Reserved." : "എല്ലാ അവകാശങ്ങളും നിക്ഷിപ്തം."}
-          </p>
+          <div className="flex flex-col gap-2">
+            <p className="text-green-50">
+              &copy; {new Date().getFullYear()} {lang === "en" ? "UDF MANIFESTO TRACKER." : "യു.ഡി.എഫ് പ്രകടനപത്രിക ട്രാക്കർ."} {lang === "en" ? "All Rights Reserved." : "എല്ലാ അവകാശങ്ങളും നിക്ഷിപ്തം."}
+            </p>
+            <div className="flex items-center gap-3 text-[10px] font-mono-tech uppercase tracking-wider text-green-200">
+              <Link to="/privacy" className="hover:text-white hover:underline transition-colors no-underline">Privacy Policy</Link>
+              <span className="text-green-300/40">|</span>
+              <Link to="/data-deletion" className="hover:text-white hover:underline transition-colors no-underline">Data Deletion</Link>
+            </div>
+          </div>
           
           {/* Custom Designer attribution linked to ridanasif.com */}
           <div className="font-mono-tech tracking-wide text-green-100 bg-green-flag-dark/30 border border-green-flag-dark/40 px-4 py-2 rounded-lg">
@@ -224,6 +353,24 @@ function App() {
           </div>
         </div>
       </footer>
+
+      {/* Traditional Account Form Modal */}
+      <AuthModal 
+        isOpen={authOpen} 
+        onClose={() => setAuthOpen(false)} 
+        onAuthSuccess={(u) => setUser(u)}
+      />
+
+      {/* Global Status Update Modal triggered from Home Card */}
+      <UpdateStatusModal
+        promise={activePromiseForUpdate}
+        user={user}
+        lang={lang}
+        t={t}
+        isOpen={!!activePromiseForUpdate}
+        onClose={() => setActivePromiseForUpdate(null)}
+        onPromiseUpdated={handlePromiseUpdated}
+      />
 
     </div>
   );

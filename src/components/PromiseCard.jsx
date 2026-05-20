@@ -1,6 +1,8 @@
 import React from "react";
+import { Link } from "react-router-dom";
+import { FaHistory, FaRegComments, FaBalanceScale } from "react-icons/fa";
 
-export default function PromiseCard({ promise, viewMode, lang, t }) {
+export default function PromiseCard({ promise, viewMode, lang, t, onOpenUpdateStatus }) {
   // Map styles based on status
   const getStatusStyle = (status) => {
     switch (status) {
@@ -53,11 +55,36 @@ export default function PromiseCard({ promise, viewMode, lang, t }) {
           </p>
         </div>
 
-        <div className="mt-4 md:mt-0 flex flex-col justify-end gap-1 border-t md:border-none pt-3 md:pt-0 border-slate-200/60 flex-shrink-0 md:text-right min-w-[200px]">
-          <span className="text-[9px] text-slate-400 font-mono-tech uppercase font-bold">{t.department}</span>
-          <span className="text-xs text-slate-800 font-bold font-space leading-tight">
-            {department || "TBD"}
-          </span>
+        <div className="mt-4 md:mt-0 flex flex-col gap-3 border-t md:border-none pt-3 md:pt-0 border-slate-200/60 flex-shrink-0 min-w-[220px]">
+          <div className="flex flex-col gap-1">
+            <span className="text-[9px] text-slate-400 font-mono-tech uppercase font-bold">{t.department}</span>
+            <span className="text-xs text-slate-800 font-bold font-space leading-tight">
+              {department || "TBD"}
+            </span>
+          </div>
+          
+          {/* Action Route Keys - Dedicated Grid Line */}
+          <div className="grid grid-cols-2 gap-2">
+            <Link 
+              to={`/promise/${promise.id}/history`}
+              className="py-2 rounded-lg border border-slate-200 hover:bg-slate-50 text-[10px] font-mono-tech font-bold uppercase tracking-wider text-slate-600 hover:text-slate-800 transition-all no-underline bg-white text-center flex items-center justify-center gap-1"
+            >
+              <FaHistory className="text-slate-400" /> History
+            </Link>
+            <Link 
+              to={`/promise/${promise.id}/comments`}
+              className="py-2 rounded-lg border border-slate-200 hover:bg-slate-50 text-[10px] font-mono-tech font-bold uppercase tracking-wider text-slate-600 hover:text-slate-800 transition-all no-underline bg-white text-center flex items-center justify-center gap-1"
+            >
+              <FaRegComments className="text-slate-400" /> Comments
+            </Link>
+          </div>
+          
+          <button
+            onClick={() => onOpenUpdateStatus(promise)}
+            className="w-full bg-navy-flag hover:bg-navy-flag-dark text-white rounded-lg py-2 text-[10px] font-mono-tech font-bold uppercase tracking-wider transition-all cursor-pointer border-none text-center flex items-center justify-center gap-1.5"
+          >
+            <FaBalanceScale /> Update Status
+          </button>
         </div>
       </div>
     );
@@ -89,12 +116,37 @@ export default function PromiseCard({ promise, viewMode, lang, t }) {
         </p>
       </div>
 
-      {/* Card Bottom */}
-      <div className="bg-slate-50 px-6 py-3 border-t border-slate-200/60 flex flex-col gap-1">
-        <span className="text-[9px] text-slate-400 font-mono-tech uppercase font-bold">{t.department}</span>
-        <span className="text-xs text-slate-800 font-bold font-space leading-tight truncate">
-          {department || "TBD"}
-        </span>
+      {/* Card Bottom - Responsible Department and Actions Grid */}
+      <div className="bg-slate-50 px-6 py-4 border-t border-slate-200/40 flex flex-col gap-3.5">
+        <div className="flex flex-col gap-1 overflow-hidden">
+          <span className="text-[9px] text-slate-400 font-mono-tech uppercase font-bold">{t.department}</span>
+          <span className="text-xs text-slate-800 font-bold font-space leading-tight truncate">
+            {department || "TBD"}
+          </span>
+        </div>
+        
+        {/* Dedicated Grid Line for actions */}
+        <div className="grid grid-cols-2 gap-2 pt-1 border-t border-slate-200/40">
+          <Link 
+            to={`/promise/${promise.id}/history`}
+            className="py-2 rounded-lg border border-slate-200 hover:bg-slate-100 text-[10px] font-mono-tech font-bold uppercase tracking-wider text-slate-600 hover:text-slate-800 transition-all no-underline bg-white text-center flex items-center justify-center gap-1"
+          >
+            <FaHistory className="text-slate-400" /> History
+          </Link>
+          <Link 
+            to={`/promise/${promise.id}/comments`}
+            className="py-2 rounded-lg border border-slate-200 hover:bg-slate-100 text-[10px] font-mono-tech font-bold uppercase tracking-wider text-slate-600 hover:text-slate-800 transition-all no-underline bg-white text-center flex items-center justify-center gap-1"
+          >
+            <FaRegComments className="text-slate-400" /> Comments
+          </Link>
+        </div>
+
+        <button
+          onClick={() => onOpenUpdateStatus(promise)}
+          className="w-full bg-navy-flag hover:bg-navy-flag-dark text-white rounded-lg py-2 text-[10px] font-mono-tech font-bold uppercase tracking-wider transition-all cursor-pointer border-none text-center flex items-center justify-center gap-1.5"
+        >
+          <FaBalanceScale /> Update Status
+        </button>
       </div>
     </div>
   );
