@@ -18,7 +18,7 @@ export default function Filters({
     <div className="bg-white border border-slate-200 rounded-xl p-5 mb-8">
       
       {/* Search Input, Status and View Mode */}
-      <div className="flex flex-col lg:flex-row gap-4 items-stretch lg:items-center justify-between pb-5 border-b border-slate-150">
+      <div className="flex flex-col lg:flex-row gap-4 items-stretch lg:items-center justify-between pb-5 border-b border-slate-200/60">
         
         {/* Search */}
         <div className="relative flex-1">
@@ -30,7 +30,7 @@ export default function Filters({
             placeholder={t.search_placeholder}
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full bg-slate-50 border border-slate-200 rounded-lg py-2.5 pl-12 pr-10 focus:outline-none focus:border-navy-flag focus:bg-white text-sm font-sans transition-all placeholder:text-slate-400 text-slate-800"
+            className="w-full bg-slate-50 border border-slate-200 rounded-lg py-2.5 pl-12 pr-10 focus:outline-none focus:border-navy-flag/40 focus:bg-white text-sm font-sans transition-all placeholder:text-slate-400 text-slate-800"
           />
           {searchQuery && (
             <button 
@@ -47,13 +47,14 @@ export default function Filters({
         {/* Filters and View toggles */}
         <div className="flex flex-wrap items-center gap-3">
           
-          {/* Status Pills */}
+          {/* Status Pills with Bypassed added */}
           <div className="flex items-center gap-1 bg-slate-50 border border-slate-200 rounded-lg p-0.5">
             {[
               { id: "All", label_en: "All", label_ml: "എല്ലാം" },
               { id: "fulfilled", label_en: "Fulfilled", label_ml: "നടപ്പിലായത്" },
               { id: "in_progress", label_en: "In Progress", label_ml: "പുരോഗതിയിൽ" },
-              { id: "pending", label_en: "Pending", label_ml: "ബാക്കി" }
+              { id: "pending", label_en: "Pending", label_ml: "ബാക്കി" },
+              { id: "evaded", label_en: "Bypassed", label_ml: "ഉപേക്ഷിച്ചത്" }
             ].map(st => (
               <button
                 key={st.id}
@@ -73,7 +74,7 @@ export default function Filters({
           <div className="flex items-center bg-slate-50 border border-slate-200 rounded-lg p-0.5">
             <button 
               onClick={() => setViewMode("grid")}
-              className={`p-1.5 rounded transition-all cursor-pointer border-none outline-none ${viewMode === "grid" ? "bg-white text-navy-flag border border-slate-200" : "text-slate-400 hover:text-slate-600"}`}
+              className={`p-1.5 rounded transition-all cursor-pointer border-none outline-none ${viewMode === "grid" ? "bg-white text-navy-flag border border-slate-200/50" : "text-slate-400 hover:text-slate-600"}`}
               title="Grid View"
             >
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -82,7 +83,7 @@ export default function Filters({
             </button>
             <button 
               onClick={() => setViewMode("list")}
-              className={`p-1.5 rounded transition-all cursor-pointer border-none outline-none ${viewMode === "list" ? "bg-white text-navy-flag border border-slate-200" : "text-slate-400 hover:text-slate-600"}`}
+              className={`p-1.5 rounded transition-all cursor-pointer border-none outline-none ${viewMode === "list" ? "bg-white text-navy-flag border border-slate-200/50" : "text-slate-400 hover:text-slate-600"}`}
               title="List View"
             >
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">

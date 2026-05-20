@@ -2,14 +2,17 @@ import React from "react";
 
 export default function Navbar({ lang, setLang, t }) {
   return (
-    <header className="sticky top-0 z-50 bg-white border-b border-slate-200 transition-all duration-300">
+    <header className="sticky top-0 z-50 bg-white border-b border-slate-100 transition-all duration-300">
       
       {/* 1. Flat Disclaimer Banner (Combined on top) */}
-      <div className="bg-saffron text-slate-900 border-b border-saffron-dark/20 text-center py-2 px-4 text-xs font-mono-tech font-bold">
+      <div className="bg-saffron text-slate-900 border-b border-saffron-dark/10 text-center py-2 px-4 text-xs font-mono-tech font-bold">
         <div className="max-w-7xl mx-auto">
           {t.disclaimer}
         </div>
       </div>
+
+      {/* Flag Stripe Accent Line */}
+      <div className="flag-stripe"></div>
 
       {/* 2. Main Navigation Bar Row */}
       <div className="max-w-7xl mx-auto px-4 md:px-8 py-3.5 flex items-center justify-between">
@@ -40,7 +43,7 @@ export default function Navbar({ lang, setLang, t }) {
         </div>
 
         {/* Right Side: Malayalam Language Toggle (Flat Thin-Border Style) */}
-        <div className="flex items-center gap-1 bg-slate-100 border border-slate-200 rounded-lg p-0.5">
+        <div className="flex items-center gap-1 bg-slate-100 border border-slate-200/60 rounded-lg p-0.5">
           <button
             onClick={() => setLang("en")}
             className={`px-3 py-1.5 rounded text-xs font-mono-tech font-bold uppercase transition-all cursor-pointer border-none outline-none ${

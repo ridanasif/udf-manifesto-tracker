@@ -21,7 +21,7 @@ const UI_TRANSLATIONS = {
     fulfilled: "FULFILLED",
     in_progress: "IN PROGRESS",
     pending: "PENDING",
-    evaded: "EVADED",
+    evaded: "BYPASSED",
     completion_rate: "COMPLETION RATE",
     search_placeholder: "Search promises by title, keyword, or category...",
     department: "Responsible Department",
@@ -40,7 +40,7 @@ const UI_TRANSLATIONS = {
     fulfilled: "നടപ്പിലാക്കിയത്",
     in_progress: "പുരോഗതിയിൽ",
     pending: "ബാക്കിനിൽക്കുന്നത്",
-    evaded: "ലംഘിച്ചത്",
+    evaded: "ഉപേക്ഷിച്ചത്",
     completion_rate: "പൂർത്തീകരണ നിരക്ക്",
     search_placeholder: "വാഗ്ദാനങ്ങൾ തിരയുക...",
     department: "ചുമതലയുള്ള വകുപ്പ്",
@@ -203,15 +203,15 @@ function App() {
 
       </main>
 
-      {/* 6. Footer (Flag stripe base, flat design credits linked to Ridan Asif) */}
-      <footer className="bg-slate-950 text-slate-500 py-12 px-4 md:px-8 border-t border-slate-900 relative">
+      {/* 6. Footer (Indian Flag Green background, flat design credits linked to Ridan Asif) */}
+      <footer className="bg-green-flag text-white py-12 px-4 md:px-8 relative">
         <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-6 text-xs md:text-sm">
-          <p>
+          <p className="text-green-50">
             &copy; {new Date().getFullYear()} {lang === "en" ? "UDF MANIFESTO TRACKER." : "യു.ഡി.എഫ് പ്രകടനപത്രിക ട്രാക്കർ."} {lang === "en" ? "All Rights Reserved." : "എല്ലാ അവകാശങ്ങളും നിക്ഷിപ്തം."}
           </p>
           
           {/* Custom Designer attribution linked to ridanasif.com */}
-          <div className="font-mono-tech tracking-wide text-slate-400 bg-white/5 border border-white/10 px-4 py-2 rounded-lg">
+          <div className="font-mono-tech tracking-wide text-green-100 bg-green-flag-dark/30 border border-green-flag-dark/40 px-4 py-2 rounded-lg">
             DESIGNED AND DEVELOPED BY {" "}
             <a 
               href="https://www.ridanasif.com" 

@@ -7,19 +7,16 @@ export default function PromiseCard({ promise, viewMode, lang, t }) {
       case "fulfilled":
         return {
           bg: "bg-green-flag-light text-green-flag-dark border-green-flag/20",
-          accent: "border-l-green-flag border-l-[3px]!",
           dot: "bg-green-flag"
         };
       case "in_progress":
         return {
           bg: "bg-saffron-light text-saffron-dark border-saffron/20",
-          accent: "border-l-saffron border-l-[3px]!",
           dot: "bg-saffron"
         };
       default:
         return {
           bg: "bg-navy-flag-light text-navy-flag-dark border-navy-flag/15",
-          accent: "border-l-navy-flag/40 border-l-[3px]!",
           dot: "bg-navy-flag"
         };
     }
@@ -36,7 +33,7 @@ export default function PromiseCard({ promise, viewMode, lang, t }) {
 
   if (viewMode === "list") {
     return (
-      <div className={`bg-white rounded-xl border border-slate-250 p-5 transition-all duration-200 flex flex-col md:flex-row md:items-center justify-between interactive-card ${statusStyle.accent}`}>
+      <div className="bg-white rounded-xl border border-slate-200 p-5 transition-all duration-200 flex flex-col md:flex-row md:items-center justify-between interactive-card">
         <div className="flex-1 pr-6">
           <div className="flex flex-wrap items-center gap-2 mb-2.5">
             <span className="text-[9px] font-mono-tech font-bold uppercase tracking-wider text-slate-400 bg-slate-100 px-2 py-0.5 rounded">
@@ -56,7 +53,7 @@ export default function PromiseCard({ promise, viewMode, lang, t }) {
           </p>
         </div>
 
-        <div className="mt-4 md:mt-0 flex flex-col justify-end gap-1 border-t md:border-none pt-3 md:pt-0 border-slate-100 flex-shrink-0 md:text-right min-w-[200px]">
+        <div className="mt-4 md:mt-0 flex flex-col justify-end gap-1 border-t md:border-none pt-3 md:pt-0 border-slate-200/60 flex-shrink-0 md:text-right min-w-[200px]">
           <span className="text-[9px] text-slate-400 font-mono-tech uppercase font-bold">{t.department}</span>
           <span className="text-xs text-slate-800 font-bold font-space leading-tight">
             {department || "TBD"}
@@ -68,7 +65,7 @@ export default function PromiseCard({ promise, viewMode, lang, t }) {
 
   // Grid Card Layout
   return (
-    <div className={`bg-white rounded-xl border border-slate-250 flex flex-col justify-between overflow-hidden interactive-card ${statusStyle.accent}`}>
+    <div className="bg-white rounded-xl border border-slate-200 flex flex-col justify-between overflow-hidden interactive-card">
       <div className="p-6">
         {/* Card Top */}
         <div className="flex justify-between items-start gap-2 mb-3.5">
@@ -93,7 +90,7 @@ export default function PromiseCard({ promise, viewMode, lang, t }) {
       </div>
 
       {/* Card Bottom */}
-      <div className="bg-slate-50 px-6 py-3 border-t border-slate-200 flex flex-col gap-1">
+      <div className="bg-slate-50 px-6 py-3 border-t border-slate-200/60 flex flex-col gap-1">
         <span className="text-[9px] text-slate-400 font-mono-tech uppercase font-bold">{t.department}</span>
         <span className="text-xs text-slate-800 font-bold font-space leading-tight truncate">
           {department || "TBD"}

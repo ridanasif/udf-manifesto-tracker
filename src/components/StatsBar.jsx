@@ -2,7 +2,7 @@ import React from "react";
 
 export default function StatsBar({ stats, selectedStatus, setSelectedStatus, t }) {
   return (
-    <section className="bg-white border-y border-slate-200 py-6 relative z-20">
+    <section className="bg-white border-y border-slate-100 py-6 relative z-20">
       <div className="max-w-7xl mx-auto px-4 md:px-8">
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-5 md:gap-4 divide-y md:divide-y-0 md:divide-x divide-slate-100">
           
@@ -10,7 +10,7 @@ export default function StatsBar({ stats, selectedStatus, setSelectedStatus, t }
           <button 
             onClick={() => setSelectedStatus("All")}
             className={`text-center md:text-left md:px-4 py-3 md:py-2 hover:bg-slate-50 transition-all flex flex-col justify-center items-center md:items-start border rounded-xl cursor-pointer w-full border-transparent interactive-card ${
-              selectedStatus === "All" ? "bg-slate-100 border-slate-300!" : ""
+              selectedStatus === "All" ? "bg-slate-100 border-slate-200/60!" : ""
             }`}
           >
             <span className="text-3xl md:text-4xl font-mono-tech font-bold text-slate-900">
@@ -24,8 +24,8 @@ export default function StatsBar({ stats, selectedStatus, setSelectedStatus, t }
           {/* Stat 2: Fulfilled */}
           <button 
             onClick={() => setSelectedStatus("fulfilled")}
-            className={`text-center md:text-left md:px-4 py-3 md:py-2 hover:bg-slate-50 transition-all flex flex-col justify-center items-center md:items-start border rounded-xl cursor-pointer w-full border-transparent border-l-[3px]! border-l-green-flag! interactive-card ${
-              selectedStatus === "fulfilled" ? "bg-green-flag/5 border-green-flag/25!" : ""
+            className={`text-center md:text-left md:px-4 py-3 md:py-2 hover:bg-slate-50 transition-all flex flex-col justify-center items-center md:items-start border rounded-xl cursor-pointer w-full border-transparent interactive-card ${
+              selectedStatus === "fulfilled" ? "bg-green-flag/5 border-slate-200!" : ""
             }`}
           >
             <span className="text-3xl md:text-4xl font-mono-tech font-bold text-green-flag">
@@ -39,8 +39,8 @@ export default function StatsBar({ stats, selectedStatus, setSelectedStatus, t }
           {/* Stat 3: In Progress */}
           <button 
             onClick={() => setSelectedStatus("in_progress")}
-            className={`text-center md:text-left md:px-4 py-3 md:py-2 hover:bg-slate-50 transition-all flex flex-col justify-center items-center md:items-start border rounded-xl cursor-pointer w-full border-transparent border-l-[3px]! border-l-saffron! interactive-card ${
-              selectedStatus === "in_progress" ? "bg-saffron/5 border-saffron/25!" : ""
+            className={`text-center md:text-left md:px-4 py-3 md:py-2 hover:bg-slate-50 transition-all flex flex-col justify-center items-center md:items-start border rounded-xl cursor-pointer w-full border-transparent interactive-card ${
+              selectedStatus === "in_progress" ? "bg-saffron/5 border-slate-200!" : ""
             }`}
           >
             <span className="text-3xl md:text-4xl font-mono-tech font-bold text-saffron">
@@ -54,8 +54,8 @@ export default function StatsBar({ stats, selectedStatus, setSelectedStatus, t }
           {/* Stat 4: Evaded */}
           <button 
             onClick={() => setSelectedStatus("evaded")}
-            className={`text-center md:text-left md:px-4 py-3 md:py-2 hover:bg-slate-50 transition-all flex flex-col justify-center items-center md:items-start border rounded-xl cursor-pointer w-full border-transparent border-l-[3px]! border-l-rose-500! interactive-card ${
-              selectedStatus === "evaded" ? "bg-rose-50 border-rose-200!" : ""
+            className={`text-center md:text-left md:px-4 py-3 md:py-2 hover:bg-slate-50 transition-all flex flex-col justify-center items-center md:items-start border rounded-xl cursor-pointer w-full border-transparent interactive-card ${
+              selectedStatus === "evaded" ? "bg-rose-50 border-slate-200!" : ""
             }`}
           >
             <span className="text-3xl md:text-4xl font-mono-tech font-bold text-slate-400">
@@ -69,8 +69,8 @@ export default function StatsBar({ stats, selectedStatus, setSelectedStatus, t }
           {/* Stat 5: Pending */}
           <button 
             onClick={() => setSelectedStatus("pending")}
-            className={`text-center md:text-left md:px-4 py-3 md:py-2 hover:bg-slate-50 transition-all flex flex-col justify-center items-center md:items-start border rounded-xl cursor-pointer w-full border-transparent border-l-[3px]! border-l-navy-flag! interactive-card ${
-              selectedStatus === "pending" ? "bg-navy-flag/5 border-navy-flag/20!" : ""
+            className={`text-center md:text-left md:px-4 py-3 md:py-2 hover:bg-slate-50 transition-all flex flex-col justify-center items-center md:items-start border rounded-xl cursor-pointer w-full border-transparent interactive-card ${
+              selectedStatus === "pending" ? "bg-navy-flag/5 border-slate-200!" : ""
             }`}
           >
             <span className="text-3xl md:text-4xl font-mono-tech font-bold text-navy-flag">
