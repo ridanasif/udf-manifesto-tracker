@@ -1,21 +1,85 @@
 {
   "name": "UDF Manifesto Tracker",
-  "short_name": "UDF Manifesto Tracker",
+  "short_name": "UDF Tracker",
+  "description": "Independent citizen tracker for Kerala UDF manifesto promises, public updates, comments, and verification history.",
+  "id": "/",
+  "start_url": "/?source=pwa",
+  "scope": "/",
+  "lang": "en-IN",
+  "dir": "ltr",
+  "categories": [
+    "government",
+    "news",
+    "politics",
+    "productivity",
+    "utilities"
+  ],
+  "display": "standalone",
+  "display_override": [
+    "standalone",
+    "minimal-ui",
+    "browser"
+  ],
+  "orientation": "portrait-primary",
+  "theme_color": "#000080",
+  "background_color": "#F8FAFC",
+  "prefer_related_applications": false,
   "icons": [
     {
       "src": "/web-app-manifest-192x192.png",
       "sizes": "192x192",
       "type": "image/png",
-      "purpose": "maskable"
+      "purpose": "any maskable"
     },
     {
       "src": "/web-app-manifest-512x512.png",
       "sizes": "512x512",
       "type": "image/png",
-      "purpose": "maskable"
+      "purpose": "any maskable"
     }
   ],
-  "theme_color": "#ffffff",
-  "background_color": "#ffffff",
-  "display": "standalone"
+  "shortcuts": [
+    {
+      "name": "Open Promise Tracker",
+      "short_name": "Tracker",
+      "description": "Open the live manifesto promise dashboard.",
+      "url": "/?source=pwa-shortcut",
+      "icons": [
+        {
+          "src": "/web-app-manifest-192x192.png",
+          "sizes": "192x192",
+          "type": "image/png",
+          "purpose": "any maskable"
+        }
+      ]
+    },
+    {
+      "name": "Privacy Policy",
+      "short_name": "Privacy",
+      "description": "Read the tracker privacy policy.",
+      "url": "/privacy?source=pwa-shortcut",
+      "icons": [
+        {
+          "src": "/web-app-manifest-192x192.png",
+          "sizes": "192x192",
+          "type": "image/png",
+          "purpose": "any maskable"
+        }
+      ]
+    },
+    {
+      "name": "Data Deletion",
+      "short_name": "Delete Data",
+      "description": "Open the user data deletion page.",
+      "url": "/data-deletion?source=pwa-shortcut",
+      "icons": [
+        {
+          "src": "/web-app-manifest-192x192.png",
+          "sizes": "192x192",
+          "type": "image/png",
+          "purpose": "any maskable"
+        }
+      ]
+    }
+  ]
 }

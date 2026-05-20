@@ -5,6 +5,36 @@ import tailwindcss from '@tailwindcss/vite'
 // https://vite.dev/config/
 export default defineConfig({
   plugins: [react(), tailwindcss()],
+  build: {
+    rolldownOptions: {
+      output: {
+        codeSplitting: {
+          groups: [
+            {
+              name: 'react-vendor',
+              test: /node_modules\/(react|react-dom|react-router-dom)\//,
+              priority: 30
+            },
+            {
+              name: 'supabase-vendor',
+              test: /node_modules\/@supabase\//,
+              priority: 20
+            },
+            {
+              name: 'ui-vendor',
+              test: /node_modules\/(react-icons|@vercel)\//,
+              priority: 10
+            },
+            {
+              name: 'vendor',
+              test: /node_modules\//,
+              priority: 0
+            }
+          ]
+        }
+      }
+    }
+  },
   server: {
     host: '127.0.0.1',
     port: 5173

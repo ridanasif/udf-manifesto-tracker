@@ -18,14 +18,15 @@ Built with **React, Vite, Tailwind CSS, and Supabase (PostgreSQL)**, this platfo
 *   **💬 Simple Account Access & Data Autonomy**:
     *   Secure integration using pure Google & Facebook OAuth (no password databases to compromise).
     *   **Cascading Wipe Page (`/data-deletion`)**: Provides users with a single-click mechanism to instantly expunge all their suggested updates, comments, votes, and profile histories from the database to comply with Meta Developer policies.
+*   **📲 Installable PWA**: Complete web app manifest, app icons, production-only service worker registration, cached app shell, and a dedicated offline fallback page.
 *   **⚡ High-Performance Architecture**: Custom routing rewrite rules, instant snap-to-top snaps, fully optimized responsive components, and tight Content Security Policies (CSP).
 
 ---
 
 ## 🛠️ Tech Stack
 
-*   **Front-end Framework**: [React 18](https://reactjs.org/) + [Vite](https://vitejs.dev/) (lightning-fast HMR)
-*   **Router**: [React Router DOM v6](https://reactrouter.com/)
+*   **Front-end Framework**: [React 19](https://react.dev/) + [Vite](https://vite.dev/) (lightning-fast HMR)
+*   **Router**: [React Router DOM v7](https://reactrouter.com/)
 *   **Database & Auth**: [Supabase](https://supabase.com/) (PostgreSQL + Realtime Engine)
 *   **Styling & Icons**: [Tailwind CSS](https://tailwindcss.com/) (Curated HSL premium color system) + [React Icons](https://react-icons.github.io/react-icons/)
 *   **Hosting**: Optimized for [Vercel](https://vercel.com) deployment
@@ -35,7 +36,7 @@ Built with **React, Vite, Tailwind CSS, and Supabase (PostgreSQL)**, this platfo
 ## 📁 Repository Structure
 
 ```bash
-├── public/                    # Static assets & mascot logo brand files
+├── public/                    # Static assets, PWA manifest, service worker & offline fallback
 ├── src/
 │   ├── components/            # Reusable UI widgets
 │   │   ├── AuthModal.jsx      # Social Google/Facebook sign-in modal
@@ -56,7 +57,7 @@ Built with **React, Vite, Tailwind CSS, and Supabase (PostgreSQL)**, this platfo
 │   ├── index.css              # Custom base styles, base layout & transitions
 │   ├── main.jsx               # Entrypoint mounting DOM
 │   └── supabase.js            # Initialized Supabase DB configuration client
-├── index.html                 # HTML viewport, Google Fonts & SEO Open Graph metadata
+├── index.html                 # HTML viewport, PWA tags, Google Fonts & SEO metadata
 ├── vercel.json                # Single Page App rewrite patterns & CSP Headers
 └── vite.config.js             # Vite compilers configuration
 ```
@@ -131,7 +132,7 @@ npm install
 ```
 
 ### 3. Setup Environment Variables
-Create a file named `.env.local` in the root directory and insert your Supabase API keys:
+Copy `.env.example` to `.env.local` and insert your Supabase API keys:
 ```env
 VITE_SUPABASE_URL=https://your-supabase-project-id.supabase.co
 VITE_SUPABASE_ANON_KEY=your-supabase-publishable-anon-key
@@ -180,12 +181,21 @@ npm run dev
 ```
 Open [http://localhost:5173](http://localhost:5173) in your browser.
 
+### 6. Production Build & Installability Check
+```bash
+npm run lint
+npm run build
+npm run preview
+```
+Open the preview URL, then use the browser install action to add the tracker as a standalone app. The PWA assets are served from `public/site.webmanifest`, `public/service-worker.js`, and `public/offline.html`.
+
 ---
 
 ## 🔒 Security & Privacy Autonomy
 
 *   **Facebook & Google Developer Policies**: This app includes a dedicated `/data-deletion` route that cascade wipes all user-associated rows (comments, upvotes, profile and suggested status logs) and immediately signs the user out.
 *   **Security Headers**: Build deployments bundle production-ready headers inside [vercel.json](vercel.json) ensuring rigid Content Security Policies (CSP), Frame Denials (`X-Frame-Options: DENY`), and script execution containment policies.
+*   **Installable App Safety**: The service worker caches same-origin app shell/static assets only. Supabase API requests remain network-first and are not stored in the app cache.
 *   **Spam Moderation**: Banned users (flagged with `is_banned: true`) are client-side blocked from invoking comment inserts or database updates.
 
 ---
