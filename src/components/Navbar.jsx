@@ -4,17 +4,17 @@ export default function Navbar({ lang, setLang, t, user, onOpenAuth, onSignOut }
   const displayName = user?.user_metadata?.full_name || user?.email || "Signed-in user";
 
   return (
-    <header className="sticky top-0 z-50 bg-white border-b border-slate-100 transition-all duration-300" role="banner">
-      
-      {/* 1. Flat Disclaimer Banner (Combined on top) */}
-      <div className="bg-saffron text-slate-900 border-b border-saffron-dark/10 text-center py-2 px-4 text-sm font-mono-tech font-bold">
+    <>
+      {/* 1. Flat Disclaimer Banner (Combined on top) - Scrolls out of view */}
+      <div className="bg-saffron text-slate-900 border-b border-saffron-dark/10 text-center py-2 px-4 text-xs md:text-sm font-mono-tech font-bold relative z-40">
         <div className="max-w-7xl mx-auto">
           {t.disclaimer}
         </div>
       </div>
 
-      {/* Flag Stripe Accent Line */}
-      <div className="flag-stripe"></div>
+      <header className="sticky top-0 z-50 bg-white border-b border-slate-100 transition-all duration-300" role="banner">
+        {/* Flag Stripe Accent Line */}
+        <div className="flag-stripe"></div>
 
       {/* 2. Main Navigation Bar Row */}
       <div className="max-w-7xl mx-auto px-4 md:px-8 py-3.5 flex flex-col md:flex-row items-center justify-between gap-3 md:gap-0">
@@ -122,5 +122,6 @@ export default function Navbar({ lang, setLang, t, user, onOpenAuth, onSignOut }
 
       </div>
     </header>
+  </>
   );
 }
