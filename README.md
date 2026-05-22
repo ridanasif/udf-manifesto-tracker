@@ -1,4 +1,4 @@
-# 🗳️ UDF Manifesto Tracker (2026–2031)
+# UDF Manifesto Tracker (2026–2031)
 
 An independent, premium open-source citizen dashboard designed to track, audit, and discuss the progress of the Kerala UDF Government's election manifesto promises under Chief Minister V.D. Satheesan.
 
@@ -6,24 +6,24 @@ Built with **React, Vite, Tailwind CSS, and Supabase (PostgreSQL)**, this platfo
 
 ---
 
-## 🚀 Key Features
+## Key Features
 
-*   **📊 Live Progress Auditing**: Real-time stats calculation including overall completion rate, departmental charts, and active promise count metrics.
-*   **🌐 100% Bilingual Interface**: Instantly toggles between English and Malayalam across all screens, headers, timelines, and action modals.
-*   **🛡️ Multi-Tier Anti-Spam Control**:
+*   **Live Progress Auditing**: Real-time stats calculation including overall completion rate, departmental charts, and active promise count metrics.
+*   **100% Bilingual Interface**: Instantly toggles between English and Malayalam across all screens, headers, timelines, and action modals.
+*   **Multi-Tier Anti-Spam Control**:
     *   **Rate Limiting**: Users are strictly rate-limited to a maximum of 3 suggested status updates per week to prevent flooding.
     *   **Domain Whitelisting**: Status suggestions require a verification source link matching an explicit whitelist of 31 reputable news portals and government subdomains (e.g., `kerala.gov.in`, `thehindu.com`, `assembly.kerala.gov.in`).
     *   **Banning System**: Integrated moderator controls can instantly restrict users from posting comments or updates by flagging `is_banned` in their profiles.
-*   **🗳️ Democratic Verification Engine**: Users can upvote (+1) or downvote (-1) suggested updates. Double-click acts as a toggle, creating an open community consensus before moderation.
-*   **💬 Simple Account Access & Data Autonomy**:
+*   **Democratic Verification Engine**: Users can upvote (+1) or downvote (-1) suggested updates. Double-click acts as a toggle, creating an open community consensus before moderation.
+*   **Simple Account Access & Data Autonomy**:
     *   Secure integration using pure Google & Facebook OAuth (no password databases to compromise).
     *   **Cascading Wipe Page (`/data-deletion`)**: Provides users with a single-click mechanism to instantly expunge all their suggested updates, comments, votes, and profile histories from the database to comply with Meta Developer policies.
-*   **📲 Installable PWA**: Complete web app manifest, app icons, production-only service worker registration, cached app shell, and a dedicated offline fallback page.
-*   **⚡ High-Performance Architecture**: Custom routing rewrite rules, instant snap-to-top snaps, fully optimized responsive components, and tight Content Security Policies (CSP).
+*   **Installable PWA**: Complete web app manifest, app icons, production-only service worker registration, cached app shell, and a dedicated offline fallback page.
+*   **High-Performance Architecture**: Custom routing rewrite rules, instant snap-to-top snaps, fully optimized responsive components, and tight Content Security Policies (CSP).
 
 ---
 
-## 🛠️ Tech Stack
+## Tech Stack
 
 *   **Front-end Framework**: [React 19](https://react.dev/) + [Vite](https://vite.dev/) (lightning-fast HMR)
 *   **Router**: [React Router DOM v7](https://reactrouter.com/)
@@ -33,7 +33,7 @@ Built with **React, Vite, Tailwind CSS, and Supabase (PostgreSQL)**, this platfo
 
 ---
 
-## 📁 Repository Structure
+## Repository Structure
 
 ```bash
 ├── public/                    # Static assets, PWA manifest, service worker & offline fallback
@@ -64,7 +64,7 @@ Built with **React, Vite, Tailwind CSS, and Supabase (PostgreSQL)**, this platfo
 
 ---
 
-## 💾 Database Schema
+## Database Schema
 
 The platform relies on a PostgreSQL schema housed on Supabase. Execute the following tables inside your SQL Editor:
 
@@ -116,7 +116,7 @@ CREATE TABLE public.comments (
 
 ---
 
-## ⚙️ Local Development Setup
+## Local Development Setup
 
 Follow these steps to run the tracker on your machine:
 
@@ -191,7 +191,7 @@ Open the preview URL, then use the browser install action to add the tracker as 
 
 ---
 
-## 🔒 Security & Privacy Autonomy
+## Security & Privacy Autonomy
 
 *   **Facebook & Google Developer Policies**: This app includes a dedicated `/data-deletion` route that cascade wipes all user-associated rows (comments, upvotes, profile and suggested status logs) and immediately signs the user out.
 *   **Security Headers**: Build deployments bundle production-ready headers inside [vercel.json](vercel.json) ensuring rigid Content Security Policies (CSP), Frame Denials (`X-Frame-Options: DENY`), and script execution containment policies.
@@ -200,7 +200,7 @@ Open the preview URL, then use the browser install action to add the tracker as 
 
 ---
 
-## 🤝 Contribution Guidelines
+## Contribution Guidelines
 
 We welcome community collaborations! If you would like to submit improvements:
 1. Fork the repo.
@@ -211,7 +211,7 @@ We welcome community collaborations! If you would like to submit improvements:
 
 ---
 
-## 📧 Support & Contacts
+## Support & Contacts
 
 For security vulnerabilities or manual database purging inquiries, contact:
 *   **Lead Developer**: Ridan Asif
