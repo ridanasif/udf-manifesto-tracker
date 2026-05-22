@@ -4,6 +4,7 @@ import { PROMISES_DATA } from "./data/promises";
 import { supabase } from "./supabase";
 import { STATUS_DISPLAY, VALID_STATUSES } from "./constants";
 import { FaGithub } from "react-icons/fa";
+import { Analytics } from '@vercel/analytics/react'
 
 // Modular UI Component Imports
 import Navbar from "./components/Navbar";
@@ -67,7 +68,7 @@ function App() {
 
   // English / Malayalam language toggle state
   const [lang, setLang] = useState("en");
-  
+
   // Interactive filtering states
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("All");
@@ -148,7 +149,7 @@ function App() {
   const allPromises = useMemo(() => {
     const list = [];
     const statusMap = {};
-    
+
     // Build a map of latest status from database
     updatesList.forEach(up => {
       if (VALID_STATUSES.includes(up.new_status)) {
@@ -159,7 +160,7 @@ function App() {
     PROMISES_DATA.forEach(catGroup => {
       catGroup.promises.forEach(p => {
         const dbStatus = statusMap[p.id];
-        
+
         let statusLabel = p.statusLabel;
         let statusLabel_ml = p.statusLabel_ml;
 
@@ -221,7 +222,7 @@ function App() {
   const filteredPromises = useMemo(() => {
     return allPromises.filter(p => {
       const query = searchQuery.toLowerCase().trim();
-      const matchesSearch = !query || 
+      const matchesSearch = !query ||
         p.title.toLowerCase().includes(query) ||
         p.title_ml.toLowerCase().includes(query) ||
         p.description.toLowerCase().includes(query) ||
@@ -252,174 +253,177 @@ function App() {
   };
 
   return (
-    <div className="min-h-screen bg-slate-50 flex flex-col font-sans selection:bg-navy-flag selection:text-white antialiased">
-      <a
-        href="#main-content"
-        className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-100 focus:rounded-lg focus:bg-white focus:px-4 focus:py-2 focus:text-sm focus:font-bold focus:text-navy-flag focus:shadow-lg"
-      >
-        Skip to main content
-      </a>
-      
-      {/* Pinned Sticky Header */}
-      <Navbar 
-        lang={lang} 
-        setLang={setLang} 
-        t={t} 
-        user={user}
-        onOpenAuth={() => setAuthOpen(true)}
-        onSignOut={handleSignOut}
-      />
+    <>
+      <div className="min-h-screen bg-slate-50 flex flex-col font-sans selection:bg-navy-flag selection:text-white antialiased">
+        <a
+          href="#main-content"
+          className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-100 focus:rounded-lg focus:bg-white focus:px-4 focus:py-2 focus:text-sm focus:font-bold focus:text-navy-flag focus:shadow-lg"
+        >
+          Skip to main content
+        </a>
 
-      <Routes>
-        {/* Main Dashboard / Home Route */}
-        <Route path="/" element={
-          <>
-            {/* Hero Header Section */}
-            <Hero lang={lang} t={t} />
+        {/* Pinned Sticky Header */}
+        <Navbar
+          lang={lang}
+          setLang={setLang}
+          t={t}
+          user={user}
+          onOpenAuth={() => setAuthOpen(true)}
+          onSignOut={handleSignOut}
+        />
 
-            {/* Main Page Content */}
-            <main id="main-content" className="flex-1 w-full max-w-7xl mx-auto px-4 md:px-8 py-10 relative z-30" tabIndex="-1">
-              
-              {/* Dynamic Analytics Stats Counter */}
-              <div className="mb-10">
-                <StatsBar 
-                  stats={stats} 
-                  selectedStatus={selectedStatus} 
-                  setSelectedStatus={setSelectedStatus} 
-                  t={t} 
+        <Routes>
+          {/* Main Dashboard / Home Route */}
+          <Route path="/" element={
+            <>
+              {/* Hero Header Section */}
+              <Hero lang={lang} t={t} />
+
+              {/* Main Page Content */}
+              <main id="main-content" className="flex-1 w-full max-w-7xl mx-auto px-4 md:px-8 py-10 relative z-30" tabIndex="-1">
+
+                {/* Dynamic Analytics Stats Counter */}
+                <div className="mb-10">
+                  <StatsBar
+                    stats={stats}
+                    selectedStatus={selectedStatus}
+                    setSelectedStatus={setSelectedStatus}
+                    t={t}
+                  />
+                </div>
+
+                {/* Dynamic Filtering Panel */}
+                <Filters
+                  searchQuery={searchQuery}
+                  setSearchQuery={setSearchQuery}
+                  selectedCategory={selectedCategory}
+                  setSelectedCategory={setSelectedCategory}
+                  selectedStatus={selectedStatus}
+                  setSelectedStatus={setSelectedStatus}
+                  viewMode={viewMode}
+                  setViewMode={setViewMode}
+                  categories={categoriesList}
+                  categoryCounts={categoryCounts}
+                  t={t}
+                  lang={lang}
                 />
-              </div>
 
-              {/* Dynamic Filtering Panel */}
-              <Filters 
-                searchQuery={searchQuery}
-                setSearchQuery={setSearchQuery}
-                selectedCategory={selectedCategory}
-                setSelectedCategory={setSelectedCategory}
-                selectedStatus={selectedStatus}
-                setSelectedStatus={setSelectedStatus}
-                viewMode={viewMode}
-                setViewMode={setViewMode}
-                categories={categoriesList}
-                categoryCounts={categoryCounts}
-                t={t}
+                {/* Promises Presentation Grid */}
+                <PromisesGrid
+                  filteredPromises={filteredPromises}
+                  viewMode={viewMode}
+                  lang={lang}
+                  t={t}
+                  resetFilters={handleResetFilters}
+                  isLoading={updatesLoading}
+                  errorMessage={updatesError}
+                  onOpenUpdateStatus={(promise) => {
+                    if (user) {
+                      setActivePromiseForUpdate(promise);
+                    } else {
+                      setAuthOpen(true);
+                    }
+                  }}
+                />
+
+              </main>
+            </>
+          } />
+
+          {/* Verification History Timeline Page */}
+          <Route path="/promise/:id/history" element={
+            <div className="flex-1">
+              <PromiseHistoryPage
+                allPromises={allPromises}
+                user={user}
                 lang={lang}
-              />
-
-              {/* Promises Presentation Grid */}
-              <PromisesGrid 
-                filteredPromises={filteredPromises}
-                viewMode={viewMode}
-                lang={lang}
                 t={t}
-                resetFilters={handleResetFilters}
-                isLoading={updatesLoading}
-                errorMessage={updatesError}
-                onOpenUpdateStatus={(promise) => {
-                  if (user) {
-                    setActivePromiseForUpdate(promise);
-                  } else {
-                    setAuthOpen(true);
-                  }
-                }}
+                onPromiseUpdated={handlePromiseUpdated}
               />
-
-            </main>
-          </>
-        } />
-
-        {/* Verification History Timeline Page */}
-        <Route path="/promise/:id/history" element={
-          <div className="flex-1">
-            <PromiseHistoryPage 
-              allPromises={allPromises}
-              user={user}
-              lang={lang}
-              t={t}
-              onPromiseUpdated={handlePromiseUpdated}
-            />
-          </div>
-        } />
-
-        {/* Public Citizen Deliberation Comments Page */}
-        <Route path="/promise/:id/comments" element={
-          <div className="flex-1">
-            <PromiseCommentsPage 
-              allPromises={allPromises}
-              user={user}
-              lang={lang}
-              t={t}
-            />
-          </div>
-        } />
-
-        {/* Compliance Pages */}
-        <Route path="/privacy" element={<PrivacyPolicyPage lang={lang} />} />
-        <Route path="/data-deletion" element={<DataDeletionPage user={user} onSignOut={handleSignOut} lang={lang} />} />
-      </Routes>
-
-      {/* Footer */}
-      <footer className="bg-green-flag text-white py-12 px-4 md:px-8 relative">
-        <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-6 text-xs md:text-sm">
-          
-          <div className="flex flex-col items-center md:items-start gap-2.5 text-center md:text-left">
-            <p className="text-green-50 leading-relaxed">
-              &copy; {new Date().getFullYear()} UDF Manifesto Tracker. {lang === "en" ? "All Rights Reserved." : "എല്ലാ അവകാശങ്ങളും നിക്ഷിപ്തം."}
-            </p>
-            <div className="flex flex-wrap items-center justify-center md:justify-start gap-3 text-xs font-mono-tech uppercase tracking-wider text-green-200">
-              <Link to="/privacy" className="hover:text-white hover:underline transition-colors no-underline flex items-center h-full">Privacy Policy</Link>
-              <span className="text-green-300/40 select-none">|</span>
-              <Link to="/data-deletion" className="hover:text-white hover:underline transition-colors no-underline flex items-center h-full">Data Deletion</Link>
-              <span className="text-green-300/40 select-none">|</span>
-              <a 
-                href="https://github.com/ridanasif/udf-manifesto-tracker" 
-                target="_blank" 
-                rel="noopener noreferrer" 
-                className="text-green-200 hover:text-white flex items-center gap-1.5 transition-colors no-underline font-bold h-full"
-              >
-                <FaGithub className="text-sm flex-shrink-0" />
-                <span>GITHUB</span>
-              </a>
             </div>
+          } />
+
+          {/* Public Citizen Deliberation Comments Page */}
+          <Route path="/promise/:id/comments" element={
+            <div className="flex-1">
+              <PromiseCommentsPage
+                allPromises={allPromises}
+                user={user}
+                lang={lang}
+                t={t}
+              />
+            </div>
+          } />
+
+          {/* Compliance Pages */}
+          <Route path="/privacy" element={<PrivacyPolicyPage lang={lang} />} />
+          <Route path="/data-deletion" element={<DataDeletionPage user={user} onSignOut={handleSignOut} lang={lang} />} />
+        </Routes>
+
+        {/* Footer */}
+        <footer className="bg-green-flag text-white py-12 px-4 md:px-8 relative">
+          <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-6 text-xs md:text-sm">
+
+            <div className="flex flex-col items-center md:items-start gap-2.5 text-center md:text-left">
+              <p className="text-green-50 leading-relaxed">
+                &copy; {new Date().getFullYear()} UDF Manifesto Tracker. {lang === "en" ? "All Rights Reserved." : "എല്ലാ അവകാശങ്ങളും നിക്ഷിപ്തം."}
+              </p>
+              <div className="flex flex-wrap items-center justify-center md:justify-start gap-3 text-xs font-mono-tech uppercase tracking-wider text-green-200">
+                <Link to="/privacy" className="hover:text-white hover:underline transition-colors no-underline flex items-center h-full">Privacy Policy</Link>
+                <span className="text-green-300/40 select-none">|</span>
+                <Link to="/data-deletion" className="hover:text-white hover:underline transition-colors no-underline flex items-center h-full">Data Deletion</Link>
+                <span className="text-green-300/40 select-none">|</span>
+                <a
+                  href="https://github.com/ridanasif/udf-manifesto-tracker"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-green-200 hover:text-white flex items-center gap-1.5 transition-colors no-underline font-bold h-full"
+                >
+                  <FaGithub className="text-sm flex-shrink-0" />
+                  <span>GITHUB</span>
+                </a>
+              </div>
+            </div>
+
+            {/* Custom Designer attribution linked to ridanasif.com */}
+            <div className="font-mono-tech tracking-wide text-green-100 bg-green-flag-dark/30 border border-green-flag-dark/40 px-4 py-2.5 rounded-lg flex items-center justify-center text-center">
+              <span>
+                DESIGNED AND DEVELOPED BY {" "}
+                <a
+                  href="https://www.ridanasif.com"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-white hover:text-saffron underline decoration-saffron underline-offset-4 transition-colors font-bold"
+                >
+                  RIDAN ASIF
+                </a>
+              </span>
+            </div>
+
           </div>
-          
-          {/* Custom Designer attribution linked to ridanasif.com */}
-          <div className="font-mono-tech tracking-wide text-green-100 bg-green-flag-dark/30 border border-green-flag-dark/40 px-4 py-2.5 rounded-lg flex items-center justify-center text-center">
-            <span>
-              DESIGNED AND DEVELOPED BY {" "}
-              <a 
-                href="https://www.ridanasif.com" 
-                target="_blank" 
-                rel="noopener noreferrer" 
-                className="text-white hover:text-saffron underline decoration-saffron underline-offset-4 transition-colors font-bold"
-              >
-                RIDAN ASIF
-              </a>
-            </span>
-          </div>
+        </footer>
 
-        </div>
-      </footer>
+        {/* Traditional Account Form Modal */}
+        <AuthModal
+          isOpen={authOpen}
+          onClose={() => setAuthOpen(false)}
+          lang={lang}
+        />
 
-      {/* Traditional Account Form Modal */}
-      <AuthModal 
-        isOpen={authOpen} 
-        onClose={() => setAuthOpen(false)} 
-        lang={lang}
-      />
+        {/* Global Status Update Modal triggered from Home Card */}
+        <UpdateStatusModal
+          promise={activePromiseForUpdate}
+          user={user}
+          lang={lang}
+          t={t}
+          isOpen={!!activePromiseForUpdate}
+          onClose={() => setActivePromiseForUpdate(null)}
+          onPromiseUpdated={handlePromiseUpdated}
+        />
 
-      {/* Global Status Update Modal triggered from Home Card */}
-      <UpdateStatusModal
-        promise={activePromiseForUpdate}
-        user={user}
-        lang={lang}
-        t={t}
-        isOpen={!!activePromiseForUpdate}
-        onClose={() => setActivePromiseForUpdate(null)}
-        onPromiseUpdated={handlePromiseUpdated}
-      />
-
-    </div>
+      </div>
+      <Analytics />
+    </>
   );
 }
 
